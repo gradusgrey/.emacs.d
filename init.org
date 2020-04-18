@@ -1,5 +1,7 @@
+#+TITLE: My Emacs configuration
+
 #+begin_src emacs-lisp
-  (set-face-attribute 'default nil :height 165)
+(set-face-attribute 'default nil :height 165)
 
 ;; start with planning.org
 (setq initial-buffer-choice "~/Org/planning.org")
