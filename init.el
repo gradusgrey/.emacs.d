@@ -1,4 +1,4 @@
-;;; init.el --- Where all the magic
+;;; init.el
 (eval-when-compile
   (require 'package)
   (package-initialize)
