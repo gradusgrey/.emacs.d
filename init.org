@@ -1,7 +1,18 @@
 #+TITLE: My Emacs configuration
 
-#+begin_src emacs-lisp
+* General
+#+BEGIN_SRC emacs-lisp
 (set-face-attribute 'default nil :height 165)
+
+;;-----------------------------------------------------------------------------------
+;; theme aesthetics
+;;-----------------------------------------------------------------------------------
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+	:config (setq doom-modeline-height 15
+								doom-modeline-bar-width 3)
+	)
 
 ;; start with planning.org
 (setq initial-buffer-choice "~/Org/planning.org")
@@ -50,39 +61,56 @@
         ("NOTE"       success bold))
 			hl-todo-include-modes
 			(quote (LaTeX-mode emacs-lisp-mode)))
+#+END_SRC
 
-(drag-stuff-global-mode 1)
-(drag-stuff-define-keys)
-
+* Editing
+** Better comments
+#+BEGIN_SRC emacs-lisp
 (use-package comment-dwim-2
-	:bind ("M-;" . comment-dwim-2) ;; better commenting
+	:bind ("M-;" . comment-dwim-2)
 	)
+#+END_SRC
 
+** drag-stuff
+#+BEGIN_SRC emacs-lisp
+(use-package drag-stuff
+  :ensure t
+  :config (drag-stuff-global-mode 1)
+  :bind (
+  ("<M-up>" . drag-stuff-up)
+  ("<M-down>" . drag-stuff-down)
+  ("<C-M-left>" . drag-stuff-left)
+	("<C-M-right>" . drag-stuff-right)))
+#+END_SRC
+
+** multicursor
+#+BEGIN_SRC emacs-lisp
 (use-package multiple-cursors
   :bind
   ("C-S-c C-S-c" . mc/edit-lines)
   ("C->" . mc/mark-next-like-this)
   ("C-<" . mc/mark-previous-like-this)
   ("C-c C-<" . mc/mark-all-like-this))
+#+END_SRC
 
-;; TODO: configure this
+** TODO highlight-symbol
+#+BEGIN_SRC emacs-lisp
 (global-set-key [(control f3)] 'highlight-symbol)
 (global-set-key [f3] 'highlight-symbol-next)
 (global-set-key [(shift f3)] 'highlight-symbol-prev)
 (global-set-key [(meta f3)] 'highlight-symbol-query-replace)
+#+END_SRC
 
+** TODO
+#+BEGIN_SRC emacs-lisp
 ;; side bar
 (global-set-key [f8] 'neotree-toggle)
 
-(setq highlight-indent-guides-method 'character)
 
 (setq-default cursor-type 'bar)
 (setq-default tab-width 2)
 
-(setq langtool-language-tool-jar
-			"~/Applications/LanguageTool-4.9/languagetool-commandline.jar")
-(require 'langtool)
-(setq langtool-default-language "en-US")
+
 (add-hook 'text-mode-hook 'flyspell-mode)
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
@@ -92,12 +120,15 @@
 	(global-auto-complete-mode t) ;; auto-complete-mode
 	(add-to-list 'ac-modes 'LaTeX-mode)
 	)
+#+END_SRC
 
-
-;;-----------------------------------------------------------------------------------
-;;  Org-mode settings
-;;-----------------------------------------------------------------------------------
+* org-mode
+** prerequisite
+#+BEGIN_SRC
 (global-font-lock-mode 1)
+#+END_SRC
+** org
+#+BEGIN_SRC emacs-lisp
 (use-package org
 	:mode ("\\.org$" . org-mode)
   :init (org-clock-persistence-insinuate)
@@ -134,7 +165,10 @@
 				)
 	(add-to-list 'org-modules 'org-habit)
 	)
+#+END_SRC
 
+** org-capture
+#+BEGIN_SRC emacs-lisp
 (use-package org-capture
 	:config
 	;; append to the last headline by default
@@ -153,12 +187,18 @@
 				)
 			)
 	)
+#+END_SRC
 
+** org-bullets
+#+BEGIN_SRC emacs-lisp
 (use-package org-bullets
 	:ensure t
 	:config
 	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+END_SRC
 
+** org-journal
+#+BEGIN_SRC emacs-lisp
 (use-package org-journal
   :ensure t
   :init
@@ -171,62 +211,10 @@
 	)
 ;; Remove default keybindings
 (global-unset-key (kbd "C-c C-j"))
+#+END_SRC
 
-;;-----------------------------------------------------------------------------------
-;;  custom variables
-;;-----------------------------------------------------------------------------------
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(auto-revert-check-vc-info nil)
- '(cdlatex-math-modify-prefix 96)
- '(cdlatex-math-symbol-prefix 64)
- '(custom-enabled-themes (quote (doom-material)))
- '(custom-safe-themes
-	 (quote
-		("1ed5c8b7478d505a358f578c00b58b430dde379b856fbcb60ed8d345fc95594e" default)))
- '(display-battery-mode t)
- '(display-time-24hr-format t)
- '(display-time-day-and-date t)
- '(display-time-default-load-average nil)
- '(doc-view-continuous t)
- '(global-auto-revert-mode t)
- '(org-journal-date-format "%A, %m/%d/%Y")
- '(org-journal-dir "~/Org/journal/")
- '(org-journal-file-format "%Y.org")
- '(org-journal-file-type (quote yearly))
- '(org-journal-time-format "%H:%M")
- '(org-modules
-	 (quote
-		(org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
- '(package-selected-packages
-	 (quote
-		(elpy multiple-cursors dimmer highlight-symbol org-journal org-capture-pop-frame org-alert pandoc-mode comment-dwim-2 langtool neotree hl-todo auto-complete doom-modeline doom-themes latex-preview-pane org-bullets yasnippet pdf-tools cdlatex org material-theme auctex ## flycheck tide)))
- '(preview-orientation (quote above))
- '(tetris-x-colors
-	 [[229 192 123]
-		[97 175 239]
-		[209 154 102]
-		[224 108 117]
-		[152 195 121]
-		[198 120 221]
-		[86 182 194]]))
-
-;;-----------------------------------------------------------------------------------
-;; theme aesthetics
-;;-----------------------------------------------------------------------------------
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1)
-	:config (setq doom-modeline-height 15
-								doom-modeline-bar-width 3)
-	)
-
-;;-----------------------------------------------------------------------------------
-;; LaTeX setup
-;;-----------------------------------------------------------------------------------
+* LaTeX
+#+BEGIN_SRC emacs-lisp
 (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
 (setq exec-path (append exec-path '("/Library/TeX/texbin/")))
 ;; Add /Library/TeX/texbin/ to emacs' PATH variable
@@ -294,7 +282,7 @@
 					(?e ("\\varepsilon"))
 					(?> ("\\geq"))
 					(?< ("\\leq"))
-					(?{ ("\\subseteq"))
+					(123 ("\\subseteq"))
 					(?~ ("\\simeq"))
 					(?! ("\\neq" "\\neg"))
 					))
@@ -304,17 +292,13 @@
 					(?2 "\\sqrt" nil t nil nil)
 					(?t "\\text" nil t nil nil)
 					)))
+#+END_SRC
 
-;;-----------------------------------------------------------------------------------
-;; python
-;;-----------------------------------------------------------------------------------
+* python
+#+BEGIN_SRC emacs-lisp
 ;; TODO: configure this
 (use-package elpy
   :ensure t
   :init
   (elpy-enable))
-
-;; Local Variables:
-;; eval: (add-hook 'after-save-hook (lambda ()(org-babel-tangle)) nil t)
-;; End:
-#+end_src
+#+END_SRC

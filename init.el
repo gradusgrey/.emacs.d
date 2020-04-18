@@ -1,4 +1,4 @@
-;; init.el --- Initialization file for Emacs
+;;; init.el --- Where all the magic
 (eval-when-compile
   (require 'package)
   (package-initialize)
@@ -9,9 +9,23 @@
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
 
-;;-----------------------------------------------------------------------------------
-;;  custom variables
-;;-----------------------------------------------------------------------------------
+;; Load up Org Mode and (now included) Org Babel for elisp embedded in Org Mode files
+(setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name)))
+
+(let* ((org-dir (expand-file-name
+                 "lisp" (expand-file-name
+                         "org" (expand-file-name
+                                "src" dotfiles-dir))))
+       (org-contrib-dir (expand-file-name
+                         "lisp" (expand-file-name
+                                 "contrib" (expand-file-name
+                                            ".." org-dir))))
+       (load-path (append (list org-dir org-contrib-dir)
+                          (or load-path nil))))
+  ;; load up Org-mode and Org-babel
+  (require 'org-install)
+  (require 'ob-tangle))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -30,6 +44,9 @@
  '(display-time-default-load-average nil)
  '(doc-view-continuous t)
  '(global-auto-revert-mode t)
+ '(org-agenda-files
+	 (quote
+		("~/.emacs.d/init.org" "/Users/chenyiran/Org/emacs keybindings.org" "/Users/chenyiran/Org/planning.org")))
  '(org-journal-date-format "%A, %m/%d/%Y")
  '(org-journal-dir "~/Org/journal/")
  '(org-journal-file-format "%Y.org")
@@ -57,14 +74,13 @@
 		[152 195 121]
 		[198 120 221]
 		[86 182 194]]))
-
-(org-babel-load-file "~/.emacs.d/init.org")
-
-(provide '.emacs)
-;;; .emacs ends here
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(org-babel-load-file "~/.emacs.d/init.org")
+
+;;; .emacs ends here
