@@ -1,55 +1,43 @@
+#+TITLE: My Emacs configuration
+
+* General
+** UI
+*** Theme
+#+BEGIN_SRC emacs-lisp
 (set-face-attribute 'default nil :height 165)
-
-;;-----------------------------------------------------------------------------------
-;; theme aesthetics
-;;-----------------------------------------------------------------------------------
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1)
-	:config (setq doom-modeline-height 15
-								doom-modeline-bar-width 3)
-	)
-
-;; start with planning.org
-(setq initial-buffer-choice "~/Org/planning.org")
-
-;; add LaTeX-mode to prog-mode
-(add-hook 'LaTeX-mode-hook
-          (lambda () (run-hooks 'prog-mode-hook)))
-;; add org-mode to prog-mode
-(add-hook 'org-mode-hook
-          (lambda () (run-hooks 'prog-mode-hook)))
-
-(global-set-key (kbd "M-C-f") 'toggle-frame-fullscreen) ;; full-screen
-
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-(show-paren-mode 1) ;; highlight matching parens
-(setq show-paren-delay 0.0) ;; no delay in showing paren
-(column-number-mode 1) ;; always displays the column number
-(add-hook 'prog-mode-hook 'linum-mode) ;; displays line numbers
-
-(setq-default auto-fill-function 'do-auto-fill) ;; auto-fill-mode enabled universally
-(setq-default fill-column 85)
-
-(global-flycheck-mode 1) ;; flycheck
-
 (setq ring-bell-function 'ignore) ;; disable bell
 (tool-bar-mode -1) ;; disable ugly toolbar
 (scroll-bar-mode -1) ;; disable ugly scroll bar
-(display-battery-mode t) ;; displays battery
+#+END_SRC
+
+*** More informative modeline
+#+BEGIN_SRC emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+  :config (setq doom-modeline-height 15
+                doom-modeline-bar-width 3))
+
 (display-time-mode 1) ;; displays time
+
+;; do not load average data
 (setq display-time-default-load-average nil)
 (setq display-time-string-forms
-			'((format-time-string "%m/%d (%a) %H:%M")))
+        '((format-time-string "%m/%d (%a) %H:%M")))
+(display-battery-mode t) ;; displays battery
+#+END_SRC
 
-(electric-pair-mode 1) ;; automatically close parens, etc.
-(yas-global-mode 1) ;; enables yasnippets globally
-(delete-selection-mode 1) ;; typing replaces selected word
-(desktop-save-mode 1) ;; recover sessions on startup
-(global-auto-revert-mode t) ;; auto revert
+*** Displays line/column numbers & Highlighting stuff
+#+BEGIN_SRC emacs-lisp
+(column-number-mode 1) ;; always displays the column number
+(add-hook 'prog-mode-hook 'linum-mode) ;; displays line numbers
+
+(global-set-key [f8] 'neotree-toggle) ;; side bar
+
 (global-hl-line-mode 1) ;; highlight current line
-
 (global-hl-todo-mode 1) ;; highlight TODOs
+(show-paren-mode 1) ;; highlight matching parens
+(setq show-paren-delay 0.0) ;; no delay in showing paren
 (setq hl-todo-highlight-punctuation ":"
 			hl-todo-keyword-faces
 			`(("TODO"       error bold)
@@ -57,42 +45,41 @@
         ("NOTE"       success bold))
 			hl-todo-include-modes
 			(quote (LaTeX-mode emacs-lisp-mode)))
+#+END_SRC
 
-(use-package comment-dwim-2
-	:bind ("M-;" . comment-dwim-2)
-	)
+** Hooks and start up
+#+BEGIN_SRC emacs-lisp
+(setq initial-buffer-choice "~/Org/planning.org") ;; enter with planning.org
+(global-set-key (kbd "M-C-f") 'toggle-frame-fullscreen) ;; full-screen
+(desktop-save-mode 1) ;; recover sessions on startup
+(global-auto-revert-mode t) ;; auto revert
 
-(use-package drag-stuff
-  :ensure t
-  :config (drag-stuff-global-mode 1)
-  :bind (
-  ("<M-up>" . drag-stuff-up)
-  ("<M-down>" . drag-stuff-down)
-  ("<C-M-left>" . drag-stuff-left)
-	("<C-M-right>" . drag-stuff-right)))
+;; add LaTeX-mode to prog-mode
+(add-hook 'LaTeX-mode-hook
+          (lambda () (run-hooks 'prog-mode-hook)))
+;; add org-mode to prog-mode
+(add-hook 'org-mode-hook
+          (lambda () (run-hooks 'prog-mode-hook)))
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
 
-(use-package multiple-cursors
-  :bind
-  ("C-S-c C-S-c" . mc/edit-lines)
-  ("C->" . mc/mark-next-like-this)
-  ("C-<" . mc/mark-previous-like-this)
-  ("C-c C-<" . mc/mark-all-like-this))
+* Editing
+** Type with ease
+#+BEGIN_SRC emacs-lisp
+(delete-selection-mode 1) ;; typing replaces selected word
 
-(global-set-key [(control f3)] 'highlight-symbol)
-(global-set-key [f3] 'highlight-symbol-next)
-(global-set-key [(shift f3)] 'highlight-symbol-prev)
-(global-set-key [(meta f3)] 'highlight-symbol-query-replace)
+(global-flycheck-mode 1) ;; flycheck
+(add-hook 'text-mode-hook 'flyspell-mode) ;; flyspell
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
-;; side bar
-(global-set-key [f8] 'neotree-toggle)
-
+(setq-default auto-fill-function 'do-auto-fill) ;; auto-fill-mode enabled universally
+(setq-default fill-column 85)
 
 (setq-default cursor-type 'bar)
 (setq-default tab-width 2)
 
-
-(add-hook 'text-mode-hook 'flyspell-mode)
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+(electric-pair-mode 1) ;; automatically close parens, etc.
+(yas-global-mode 1) ;; enables yasnippets globally
 
 (use-package auto-complete
 	:config
@@ -100,7 +87,52 @@
 	(global-auto-complete-mode t) ;; auto-complete-mode
 	(add-to-list 'ac-modes 'LaTeX-mode)
 	)
+#+END_SRC
 
+** Better comments
+#+BEGIN_SRC emacs-lisp
+(use-package comment-dwim-2
+	:bind ("M-;" . comment-dwim-2)
+	)
+#+END_SRC
+
+** drag-stuff
+#+BEGIN_SRC emacs-lisp
+(use-package drag-stuff
+  :ensure t
+  :config (drag-stuff-global-mode 1)
+  :bind (
+  ("<C-M-up>" . drag-stuff-up)
+  ("<C-M-down>" . drag-stuff-down)
+  ("<C-M-left>" . drag-stuff-left)
+	("<C-M-right>" . drag-stuff-right)))
+#+END_SRC
+
+** multicursor
+#+BEGIN_SRC emacs-lisp
+(use-package multiple-cursors
+  :bind
+  ("C-S-c C-S-c" . mc/edit-lines)
+  ("C->" . mc/mark-next-like-this)
+  ("C-<" . mc/mark-previous-like-this)
+  ("C-c C-<" . mc/mark-all-like-this))
+#+END_SRC
+
+** TODO highlight-symbol
+#+BEGIN_SRC emacs-lisp
+(global-set-key [(control f3)] 'highlight-symbol)
+(global-set-key [f3] 'highlight-symbol-next)
+(global-set-key [(shift f3)] 'highlight-symbol-prev)
+(global-set-key [(meta f3)] 'highlight-symbol-query-replace)
+#+END_SRC
+
+* org-mode
+** prerequisite
+#+BEGIN_SRC
+(global-font-lock-mode 1)
+#+END_SRC
+** org
+#+BEGIN_SRC emacs-lisp
 (use-package org
 	:mode ("\\.org$" . org-mode)
   :init (org-clock-persistence-insinuate)
@@ -136,8 +168,12 @@
 					(0.0 . org-upcoming-distant-deadline))
 				)
 	(add-to-list 'org-modules 'org-habit)
+  (add-to-list 'org-structure-template-alist '("sl" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
 	)
+#+END_SRC
 
+** org-capture
+#+BEGIN_SRC emacs-lisp
 (use-package org-capture
 	:config
 	;; append to the last headline by default
@@ -156,12 +192,18 @@
 				)
 			)
 	)
+#+END_SRC
 
+** org-bullets
+#+BEGIN_SRC emacs-lisp
 (use-package org-bullets
 	:ensure t
 	:config
 	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+END_SRC
 
+** org-journal
+#+BEGIN_SRC emacs-lisp
 (use-package org-journal
   :ensure t
   :init
@@ -174,13 +216,28 @@
 	)
 ;; Remove default keybindings
 (global-unset-key (kbd "C-c C-j"))
+#+END_SRC
 
+** TODO org-alert
+#+BEGIN_SRC emacs-lisp
+(use-package org-alert
+  :ensure t
+  :init
+  (setq alert-default-style 'libnotify)
+  )
+#+END_SRC
+* LaTeX
+** Set path
+#+BEGIN_SRC emacs-lisp
 (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
 (setq exec-path (append exec-path '("/Library/TeX/texbin/")))
 ;; Add /Library/TeX/texbin/ to emacs' PATH variable
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin/"))
 (setq exec-path (append exec-path '("/usr/local/bin/")))
+#+END_SRC
 
+** AUCTeX
+#+BEGIN_SRC emacs-lisp
 (use-package tex
   :ensure auctex
 	:mode ("\\.tex\\'" . LaTeX-mode)
@@ -215,14 +272,6 @@
 	(setq TeX-view-program-selection '((output-pdf "Skim")))
 	)
 
-;; (add-hook 'LaTeX-mode-hook 'turn-on-auto-fill) ;; auto-fill in LaTeX
-
-(eval-after-load 'cdlatex ;; disable cdlatex auto paren
-	(lambda ()
-		(substitute-key-definition 'cdlatex-pbb nil cdlatex-mode-map)
-		(substitute-key-definition 'cdlatex-dollar nil cdlatex-mode-map)
-		))
-
 (eval-after-load 'latex
 	'(setq LaTeX-clean-intermediate-suffixes
 				 (append LaTeX-clean-intermediate-suffixes
@@ -230,6 +279,14 @@
 				 LaTeX-clean-output-suffixes
 				 (append LaTeX-clean-output-suffixes
 								 (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
+#+END_SRC
+** cdlatex
+#+BEGIN_SRC emacs-lisp
+(eval-after-load 'cdlatex ;; disable cdlatex auto paren
+	(lambda ()
+		(substitute-key-definition 'cdlatex-pbb nil cdlatex-mode-map)
+		(substitute-key-definition 'cdlatex-dollar nil cdlatex-mode-map)
+		))
 
 (use-package cdlatex
 	:hook (LaTeX-mode . turn-on-cdlatex)
@@ -245,6 +302,7 @@
 					(123 ("\\subseteq"))
 					(?~ ("\\simeq"))
 					(?! ("\\neq" "\\neg"))
+          (?@ ("\\circ"))
 					))
 	(setq cdlatex-math-modify-alist
 				'((?b "\\mathbb" nil t nil nil)
@@ -252,9 +310,13 @@
 					(?2 "\\sqrt" nil t nil nil)
 					(?t "\\text" nil t nil nil)
 					)))
+#+END_SRC
 
+* python
+#+BEGIN_SRC emacs-lisp
 ;; TODO: configure this
 (use-package elpy
   :ensure t
   :init
   (elpy-enable))
+#+END_SRC
