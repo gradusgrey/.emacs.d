@@ -1,7 +1,3 @@
-#+TITLE: My Emacs configuration
-
-* General
-#+BEGIN_SRC emacs-lisp
 (set-face-attribute 'default nil :height 165)
 
 ;;-----------------------------------------------------------------------------------
@@ -61,18 +57,11 @@
         ("NOTE"       success bold))
 			hl-todo-include-modes
 			(quote (LaTeX-mode emacs-lisp-mode)))
-#+END_SRC
 
-* Editing
-** Better comments
-#+BEGIN_SRC emacs-lisp
 (use-package comment-dwim-2
 	:bind ("M-;" . comment-dwim-2)
 	)
-#+END_SRC
 
-** drag-stuff
-#+BEGIN_SRC emacs-lisp
 (use-package drag-stuff
   :ensure t
   :config (drag-stuff-global-mode 1)
@@ -81,28 +70,19 @@
   ("<M-down>" . drag-stuff-down)
   ("<C-M-left>" . drag-stuff-left)
 	("<C-M-right>" . drag-stuff-right)))
-#+END_SRC
 
-** multicursor
-#+BEGIN_SRC emacs-lisp
 (use-package multiple-cursors
   :bind
   ("C-S-c C-S-c" . mc/edit-lines)
   ("C->" . mc/mark-next-like-this)
   ("C-<" . mc/mark-previous-like-this)
   ("C-c C-<" . mc/mark-all-like-this))
-#+END_SRC
 
-** TODO highlight-symbol
-#+BEGIN_SRC emacs-lisp
 (global-set-key [(control f3)] 'highlight-symbol)
 (global-set-key [f3] 'highlight-symbol-next)
 (global-set-key [(shift f3)] 'highlight-symbol-prev)
 (global-set-key [(meta f3)] 'highlight-symbol-query-replace)
-#+END_SRC
 
-** TODO
-#+BEGIN_SRC emacs-lisp
 ;; side bar
 (global-set-key [f8] 'neotree-toggle)
 
@@ -120,15 +100,7 @@
 	(global-auto-complete-mode t) ;; auto-complete-mode
 	(add-to-list 'ac-modes 'LaTeX-mode)
 	)
-#+END_SRC
 
-* org-mode
-** prerequisite
-#+BEGIN_SRC
-(global-font-lock-mode 1)
-#+END_SRC
-** org
-#+BEGIN_SRC emacs-lisp
 (use-package org
 	:mode ("\\.org$" . org-mode)
   :init (org-clock-persistence-insinuate)
@@ -165,10 +137,7 @@
 				)
 	(add-to-list 'org-modules 'org-habit)
 	)
-#+END_SRC
 
-** org-capture
-#+BEGIN_SRC emacs-lisp
 (use-package org-capture
 	:config
 	;; append to the last headline by default
@@ -187,18 +156,12 @@
 				)
 			)
 	)
-#+END_SRC
 
-** org-bullets
-#+BEGIN_SRC emacs-lisp
 (use-package org-bullets
 	:ensure t
 	:config
 	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-#+END_SRC
 
-** org-journal
-#+BEGIN_SRC emacs-lisp
 (use-package org-journal
   :ensure t
   :init
@@ -211,10 +174,7 @@
 	)
 ;; Remove default keybindings
 (global-unset-key (kbd "C-c C-j"))
-#+END_SRC
 
-* LaTeX
-#+BEGIN_SRC emacs-lisp
 (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
 (setq exec-path (append exec-path '("/Library/TeX/texbin/")))
 ;; Add /Library/TeX/texbin/ to emacs' PATH variable
@@ -292,13 +252,9 @@
 					(?2 "\\sqrt" nil t nil nil)
 					(?t "\\text" nil t nil nil)
 					)))
-#+END_SRC
 
-* python
-#+BEGIN_SRC emacs-lisp
 ;; TODO: configure this
 (use-package elpy
   :ensure t
   :init
   (elpy-enable))
-#+END_SRC

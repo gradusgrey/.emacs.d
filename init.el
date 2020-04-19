@@ -81,6 +81,5 @@
  ;; If there is more than one, they won't work right.
  )
 
-(org-babel-load-file "~/.emacs.d/init.org")
-
+(org-babel-load-file (concat user-emacs-directory "config.org"))
 ;;; .emacs ends here
