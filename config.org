@@ -323,6 +323,13 @@
 					(?t "\\text" nil t nil nil)
 					)))
 #+END_SRC
+* Magit
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :config
+  :bind
+  ("C-x g" . magit-status))
+#+END_SRC
 
 * python
 #+BEGIN_SRC emacs-lisp
