@@ -160,7 +160,7 @@
 				(org-clock-in select)
 			(if (equal major-mode 'org-mode) (org-clock-in) (error "Not in Org-mode"))))
 
-	(setq org-agenda-files '("~/Org")
+	(setq org-agenda-files '("~/Org" "~/Org/journal")
 				org-clock-persist 'history
 				org-startup-indented t
 				org-default-notes-file (concat org-directory "/notes.org")
@@ -168,6 +168,7 @@
 				org-todo-keywords (quote ((sequence "TODO" "IN PROGRESS" "|" "DONE")))
 				org-todo-keyword-faces (quote (("IN PROGRESS" :foreground "orange" :weight bold)))
 				org-clock-idle-time 15
+        org-clock-mode-line-total 'current
 
 				org-agenda-deadline-faces
 				'((1.001 . error)
@@ -178,6 +179,7 @@
         org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM"
 				)
 	(add-to-list 'org-modules 'org-habit)
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . org-mode))
   (add-to-list 'org-structure-template-alist '("sl" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
 	)
 #+END_SRC

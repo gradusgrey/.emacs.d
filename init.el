@@ -27,14 +27,6 @@
  '(display-time-default-load-average nil)
  '(doc-view-continuous t)
  '(global-auto-revert-mode t)
- '(org-agenda-files
-	 (quote
-		("~/.emacs.d/init.org" "/Users/chenyiran/Org/emacs keybindings.org" "/Users/chenyiran/Org/planning.org")))
- '(org-journal-date-format "%A, %m/%d/%Y")
- '(org-journal-dir "~/Org/journal/")
- '(org-journal-file-format "%Y.org")
- '(org-journal-file-type (quote yearly))
- '(org-journal-time-format "%H:%M")
  '(org-modules
 	 (quote
 		(org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
