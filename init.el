@@ -15,16 +15,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auto-revert-check-vc-info nil)
- '(cdlatex-math-modify-prefix 96)
- '(cdlatex-math-symbol-prefix 64)
  '(custom-enabled-themes (quote (doom-material)))
  '(custom-safe-themes
 	 (quote
 		("1ed5c8b7478d505a358f578c00b58b430dde379b856fbcb60ed8d345fc95594e" default)))
- '(display-battery-mode t)
- '(display-time-24hr-format t)
- '(display-time-day-and-date t)
- '(display-time-default-load-average nil)
  '(doc-view-continuous t)
  '(global-auto-revert-mode t)
  '(org-modules

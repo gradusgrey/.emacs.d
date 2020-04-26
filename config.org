@@ -40,7 +40,7 @@
 (setq show-paren-delay 0.0) ;; no delay in showing paren
 (setq hl-todo-highlight-punctuation ":"
 			hl-todo-keyword-faces
-			`(("TODO"       error bold)
+			'(("TODO"       error bold)
         ("FIXME"      warning bold)
         ("NOTE"       success bold))
 			hl-todo-include-modes
@@ -88,7 +88,7 @@
 	(add-to-list 'ac-modes 'LaTeX-mode)
 	)
 
-;; quick dictionary
+;; quick dictionary and thesaurus
 (use-package define-word
   :bind ("C-c d" . define-word-at-point))
 
@@ -96,7 +96,9 @@
   :bind ("C-c t" . mw-thesaurus-lookup-at-point)
 )
 #+END_SRC
-
+** TODO Spell check
+#+BEGIN_SRC emacs-lisp
+#+END_SRC
 ** Better comments
 #+BEGIN_SRC emacs-lisp
 (use-package comment-dwim-2
@@ -205,6 +207,10 @@
         ("r" "Weekly Review" entry
            (function org-journal-find-location)
            "* Weekly Review %(format-time-string org-journal-time-format)\n%i%?")
+        ("n" "Note" entry (file org-default-notes-file)
+         "* %^{Title}\n%U\n%i%?")
+        ("q" "Quote" entry (file "~/Org/Babel/quotes.org")
+         "* %^{Author}, /%^{Book}/\n%U\n%i%?")
         )
       )
 )
@@ -259,7 +265,10 @@
   (setq TeX-auto-save t
 				TeX-parse-self t
 				LaTeX-electric-left-right-brace 1 ;; automatic close tags
-				TeX-source-correlate-method 'synctex)
+				TeX-source-correlate-method 'synctex
+        TeX-source-correlate-mode t
+        TeX-source-correlate-start-server t)
+
 	(setq-default TeX-master nil)
 	;; matching dollar sign
 	(add-hook 'LaTeX-mode-hook
@@ -314,9 +323,11 @@
 					(?> ("\\geq"))
 					(?< ("\\leq"))
 					(123 ("\\subseteq"))
-					(?~ ("\\simeq"))
+					(125 ("\\supseteq"))
+          (?~ ("\\simeq"))
 					(?! ("\\neq" "\\neg"))
           (?@ ("\\circ"))
+          (?. ("\\ldots" "\\cdots"))
 					))
 	(setq cdlatex-math-modify-alist
 				'((?b "\\mathbb" nil t nil nil)
