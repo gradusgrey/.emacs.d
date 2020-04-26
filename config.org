@@ -315,9 +315,9 @@
 	:hook (LaTeX-mode . turn-on-cdlatex)
 	:ensure t
 	:config
-	(setq cdlatex-math-modify-prefix 96
-				cdlatex-math-symbol-prefix 64)
-	(setq cdlatex-math-symbol-alist
+	(setq cdlatex-math-modify-prefix "`"
+				cdlatex-math-symbol-prefix "@")
+  (setq cdlatex-math-symbol-alist
 				'((?0 ("\\varnothing" ))
 					(?e ("\\varepsilon"))
 					(?> ("\\geq"))
