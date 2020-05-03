@@ -7,6 +7,7 @@
 
 ;;; Code:
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+												 ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
 
 (custom-set-variables
@@ -22,16 +23,16 @@
 	 (quote
 		("1ed5c8b7478d505a358f578c00b58b430dde379b856fbcb60ed8d345fc95594e" default)))
  '(doc-view-continuous t)
- '(global-auto-revert-mode t)
  '(org-modules
 	 (quote
 		(org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
  '(package-selected-packages
 	 (quote
-		(magit elpy multiple-cursors dimmer highlight-symbol org-journal
-					 org-capture-pop-frame org-alert pandoc-mode comment-dwim-2 neotree hl-todo
-					 auto-complete doom-modeline doom-themes org-bullets yasnippet pdf-tools
-					 cdlatex org auctex ## flycheck tide)))
+		(markdown-mode magit elpy multiple-cursors dimmer
+									 highlight-symbol org-journal org-capture-pop-frame org-alert
+									 pandoc-mode comment-dwim-2 neotree hl-todo auto-complete
+									 doom-modeline doom-themes org-bullets yasnippet pdf-tools
+									 cdlatex org auctex ## flycheck tide)))
  '(safe-local-variable-values
 	 (quote
 		((eval add-hook

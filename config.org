@@ -112,7 +112,16 @@
 	:bind ("M-;" . comment-dwim-2)
 	)
 #+END_SRC
-
+** =markdown-mode=
+#+BEGIN_SRC emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+#+END_SRC
 ** drag-stuff
 #+BEGIN_SRC emacs-lisp
 (use-package drag-stuff
@@ -188,7 +197,6 @@
         org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM"
 				)
 	(add-to-list 'org-modules '(org-habit org-crypt))
-  (add-to-list 'auto-mode-alist '("\\.md\\'" . org-mode))
   (add-to-list 'org-structure-template-alist '("sl" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
 	)
 #+END_SRC
