@@ -3,6 +3,7 @@
 # key: sub
 # group: sections
 # name : \subsection
+# condition: t
 # --
 \subsection{${1:name}}
 \label{${2:"waiting for reftex-label call..."$(unless yas/modified-p (reftex-label nil 'dont-insert))}}
