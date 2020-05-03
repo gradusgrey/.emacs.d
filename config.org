@@ -288,7 +288,7 @@
 (use-package tex
   :ensure auctex
   :mode ("\\.tex\\'" . LaTeX-mode)
-  :bind ("s-[" . latex-compile)
+  :bind ("s-[" . TeX-command-run-all)
   :config
   (setq TeX-auto-save t
         TeX-parse-self t
@@ -303,31 +303,28 @@
             (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
             'TeX-source-correlate-mode ;; correlate enabled
             )
+ (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+    TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
 
    ;; DEPRECATED
    ;; use Skim as external viewer
-   (add-hook 'LaTeX-mode-hook
-              (lambda()
-              (add-to-list 'TeX-expand-list
-                           '("%q" skim-make-url))))
-   (defun skim-make-url ()
-   	(concat
-   	 (TeX-current-line)
-   	 " \""
-   	 (expand-file-name (funcall file (TeX-output-extension) t)
-                       (file-name-directory (TeX-master-file)))
-   	 "\" \""
-   	 (buffer-file-name)
-   	 "\""))
-   (setq TeX-view-program-list
-   			'(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
-   (setq TeX-view-program-selection '((output-pdf "Skim")))
-
-  (defun latex-compile ()
-    (interactive)
-    (save-buffer)
-    (TeX-command "LaTeX" 'TeX-master-file))
-  )
+   ;(add-hook 'LaTeX-mode-hook
+   ;           (lambda()
+   ;           (add-to-list 'TeX-expand-list
+   ;                        '("%q" skim-make-url))))
+   ;(defun skim-make-url ()
+   ;	(concat
+   ;	 (TeX-current-line)
+   ;	 " \""
+   ;	 (expand-file-name (funcall file (TeX-output-extension) t)
+   ;                    (file-name-directory (TeX-master-file)))
+   ;	 "\" \""
+   ;	 (buffer-file-name)
+   ;	 "\""))
+   ;(setq TeX-view-program-list
+   ;			'(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
+   ;(setq TeX-view-program-selection '((output-pdf "Skim")))
+)
 #+END_SRC
 ** =cdlatex=
 #+BEGIN_SRC emacs-lisp
@@ -389,9 +386,9 @@
 
 * python
 #+BEGIN_SRC emacs-lisp
-;; TODO: configure this
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable))
+  ;; TODO: configure this
+  ;; (use-package elpy
+  ;;   :ensure t
+  ;;   :init
+  ;;   (elpy-enable))
 #+END_SRC
