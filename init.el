@@ -15,6 +15,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auto-revert-check-vc-info nil)
+ '(cdlatex-math-modify-prefix 96)
+ '(cdlatex-math-symbol-prefix 64)
  '(custom-enabled-themes (quote (doom-material)))
  '(custom-safe-themes
 	 (quote
@@ -26,8 +28,10 @@
 		(org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
  '(package-selected-packages
 	 (quote
-		(magit elpy multiple-cursors dimmer highlight-symbol org-journal org-capture-pop-frame org-alert pandoc-mode comment-dwim-2 langtool neotree hl-todo auto-complete doom-modeline doom-themes latex-preview-pane org-bullets yasnippet pdf-tools cdlatex org material-theme auctex ## flycheck tide)))
- '(preview-orientation (quote above))
+		(magit elpy multiple-cursors dimmer highlight-symbol org-journal
+					 org-capture-pop-frame org-alert pandoc-mode comment-dwim-2 neotree hl-todo
+					 auto-complete doom-modeline doom-themes org-bullets yasnippet pdf-tools
+					 cdlatex org auctex ## flycheck tide)))
  '(safe-local-variable-values
 	 (quote
 		((eval add-hook
