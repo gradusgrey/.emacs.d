@@ -8,7 +8,7 @@
 ;;; Code:
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
 												 ("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")))
+												 ("melpa" . "https://melpa.org/packages/")))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -18,7 +18,6 @@
  '(auto-revert-check-vc-info nil)
  '(cdlatex-math-modify-prefix 96)
  '(cdlatex-math-symbol-prefix 64)
- '(custom-enabled-themes (quote (doom-material)))
  '(custom-safe-themes
 	 (quote
 		("1ed5c8b7478d505a358f578c00b58b430dde379b856fbcb60ed8d345fc95594e" default)))

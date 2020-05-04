@@ -4,6 +4,11 @@
 ** UI
 *** Theme
 #+BEGIN_SRC emacs-lisp
+(use-package doom-themes
+  :demand t
+  :config
+  (load-theme 'doom-material t))
+
 (set-face-attribute 'default nil :height 165)
 (setq ring-bell-function 'ignore) ;; disable bell
 (tool-bar-mode -1) ;; disable ugly toolbar
@@ -221,7 +226,7 @@
            "* %(format-time-string org-journal-time-format) %^{Title}\n%i%?")
         ("r" "Weekly Review" entry
            (function org-journal-find-location)
-           "* Weekly Review %(format-time-string org-journal-time-format):Review:\n%i%?" :created t)
+           "* Weekly Review %(format-time-string org-journal-time-format)\n%i%?" :created t)
         ("n" "Note" entry (file org-default-notes-file)
          "* %^{Title}\n%U\n%i%?")
         ("k" "Quote" entry (file "~/Org/Babel/quotes.org")
@@ -288,7 +293,7 @@
 (use-package tex
   :ensure auctex
   :mode ("\\.tex\\'" . LaTeX-mode)
-  :bind ("s-[" . TeX-command-run-all)
+  :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
   :config
   (setq TeX-auto-save t
         TeX-parse-self t
@@ -303,6 +308,7 @@
             (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
             'TeX-source-correlate-mode ;; correlate enabled
             )
+ ;; open preview using pdf-tools
  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
     TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
 
