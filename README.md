@@ -10,4 +10,5 @@ My emacs configuration
  2. Anki card template
 	- screenshots
  3. VSCode settings.json
- 4. Become Derek Hartfield
+ 4. MS Word .dotm
+ 5. Become Derek Hartfield
