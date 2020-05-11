@@ -232,7 +232,7 @@
         ("n" "Note" entry (file org-default-notes-file)
          "* %^{Title}\n%U\n%i%?")
         ("k" "Quote" entry (file "~/Org/Babel/quotes.org")
-         "* %^{Author}, /%^{Book}/\n%U\n%i%?")
+         "* %^{Author}, /%^{Work}/\n%U\n%i#+BEGIN_QUOTE\n%?\n#+END_QUOTE")
         ("c" "Correct Reasoning" entry (file "~/Org/Notes/correct-reasoning.org")
          "- %^{Description}\n")
         )
