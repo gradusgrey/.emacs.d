@@ -184,7 +184,6 @@
 		(if select
 				(org-clock-in select)
 			(if (equal major-mode 'org-mode) (org-clock-in) (error "Not in Org-mode"))))
-
 	(setq org-agenda-files '("~/Org" "~/Org/journal")
 				org-clock-persist 'history
 				org-startup-indented t
@@ -264,6 +263,19 @@
 	)
 #+END_SRC
 
+** =org-pomodoro=
+#+BEGIN_SRC emacs-lisp
+(use-package org-pomodoro
+  :ensure t
+  :after org
+  :bind (("C-c p" . org-pomodoro))
+  :config
+  (setq org-pomodoro-ticking-sound-p nil)
+  (setq org-pomodoro-start-sound-p nil)
+  (setq org-pomodoro-length 50)
+  (setq org-pomodoro-short-break-length 5)
+  (setq org-pomodoro-long-break-length 10))
+#+END_SRC
 ** TODO org-alert
 #+BEGIN_SRC emacs-lisp
 (use-package org-alert
@@ -394,9 +406,12 @@
 
 * python
 #+BEGIN_SRC emacs-lisp
-  ;; TODO: configure this
-  ;; (use-package elpy
-  ;;   :ensure t
-  ;;   :init
-  ;;   (elpy-enable))
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
+
+(use-package ein
+  :ensure t
+  )
 #+END_SRC
