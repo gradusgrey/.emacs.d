@@ -34,7 +34,7 @@
 (display-battery-mode t) ;; displays battery
 #+END_SRC
 
-*** Displays line/column numbers & Highlighting stuff
+*** Line/column numbers & Highlighting stuff
 #+BEGIN_SRC emacs-lisp
 (column-number-mode 1) ;; always displays the column number
 (add-hook 'prog-mode-hook 'linum-mode) ;; displays line numbers
@@ -202,6 +202,7 @@
 
         org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM"
 				)
+  (setq inhibit-compacting-font-caches t)
 	(add-to-list 'org-modules '(org-habit org-crypt))
   (add-to-list 'org-structure-template-alist '("sl" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
 	)
@@ -228,12 +229,10 @@
         ("r" "Weekly Review" entry
            (function org-journal-find-location)
            "* Weekly Review %(format-time-string org-journal-time-format)\n%i%?" :created t)
-        ("n" "Note" entry (file org-default-notes-file)
-         "* %^{Title}\n%U\n%i%?")
         ("k" "Quote" entry (file "~/Org/Babel/quotes.org")
          "* %^{Author}, /%^{Work}/\n%U\n%i#+BEGIN_QUOTE\n%?\n#+END_QUOTE")
-        ("c" "Correct Reasoning" entry (file "~/Org/Notes/correct-reasoning.org")
-         "- %^{Description}\n")
+        ("b" "Book" entry (file "~/Org/Babel/Books.org")
+         "* %^{Work}\n+ %^{Author}\n+ %u")
         )
       )
 )
