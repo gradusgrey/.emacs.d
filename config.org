@@ -271,7 +271,7 @@
   :config
   (setq org-pomodoro-ticking-sound-p nil)
   (setq org-pomodoro-start-sound-p nil)
-  (setq org-pomodoro-length 50)
+  (setq org-pomodoro-length 60)
   (setq org-pomodoro-short-break-length 5)
   (setq org-pomodoro-long-break-length 10))
 #+END_SRC
@@ -408,7 +408,10 @@
 (use-package elpy
   :ensure t
   :init
-  (elpy-enable))
+  (elpy-enable)
+  (setq elpy-rpc-virtualenv-path 'current
+        elpy-rpc-python-command "python3")
+)
 
 (use-package ein
   :ensure t
