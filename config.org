@@ -54,8 +54,21 @@
 			(quote (LaTeX-mode emacs-lisp-mode)))
 #+END_SRC
 
+*** =indent-guide=
+#+BEGIN_SRC emacs-lisp
+(use-package indent-guide
+  :defer 1
+  :hook ((prog-mode . indent-guide-mode))
+  :config
+    (set-face-foreground 'indent-guide-face "dimgray")
+)
+#+END_SRC
+
 ** Hooks and start up
 #+BEGIN_SRC emacs-lisp
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
 (setq initial-buffer-choice "~/Org/planning.org") ;; enter with planning.org
 (global-set-key (kbd "M-C-f") 'toggle-frame-fullscreen) ;; full-screen
 (desktop-save-mode 1) ;; recover sessions on startup
@@ -89,12 +102,10 @@
 (setq-default tab-width 2)
 
 (electric-pair-mode 1) ;; automatically close parens, etc.
+#+END_SRC
 
-(use-package yasnippet
-  :ensure t
-  :init
-    (yas-global-mode 1))
-
+** Code completion
+#+BEGIN_SRC emacs-lisp
 (use-package auto-complete
 	:config
 	(ac-config-default)
@@ -102,6 +113,15 @@
 	(add-to-list 'ac-modes 'LaTeX-mode)
 	)
 
+(use-package yasnippet
+  :ensure t
+  :init
+    (yas-global-mode 1)
+)
+#+END_SRC
+
+** TODO Spell check
+#+BEGIN_SRC emacs-lisp
 ;; quick dictionary and thesaurus
 (use-package define-word
   :bind ("C-c d" . define-word-at-point))
@@ -109,9 +129,6 @@
 (use-package mw-thesaurus
   :bind ("C-c t" . mw-thesaurus-lookup-at-point)
 )
-#+END_SRC
-** TODO Spell check
-#+BEGIN_SRC emacs-lisp
 #+END_SRC
 ** Better comments
 #+BEGIN_SRC emacs-lisp
@@ -411,6 +428,9 @@
   (elpy-enable)
   (setq elpy-rpc-virtualenv-path 'current
         elpy-rpc-python-command "python3")
+  (setq python-shell-interpreter "ipython"
+        python-shell-interpreter-args "-i --simple-prompt"
+  )
 )
 
 (use-package ein
