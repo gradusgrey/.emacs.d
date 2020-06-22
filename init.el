@@ -23,15 +23,21 @@
 		("1ed5c8b7478d505a358f578c00b58b430dde379b856fbcb60ed8d345fc95594e" default)))
  '(doc-view-continuous t)
  '(doom-themes-enable-bold t)
- '(org-agenda-files
-	 (quote
-		("~/Desktop/School/20 Summer/TDA/research_notes.org" "/Users/chenyiran/Org/emacs keybindings.org" "/Users/chenyiran/Org/notes.org" "/Users/chenyiran/Org/planning.org" "/Users/chenyiran/Org/journal/2020.org")))
+ '(indent-guide-global-mode t)
+ '(org-journal-date-format "%A, %m/%d/%Y")
+ '(org-journal-dir "~/Org/journal/")
+ '(org-journal-enable-encryption t)
+ '(org-journal-encrypt-journal t)
+ '(org-journal-file-format "%Y.org")
+ '(org-journal-file-type (quote yearly))
+ '(org-journal-time-format "%H:%M")
  '(org-modules
 	 (quote
 		(org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
  '(package-selected-packages
 	 (quote
-		(org-pomodoro elpygen ein markdown-mode magit elpy multiple-cursors dimmer highlight-symbol org-journal org-capture-pop-frame org-alert pandoc-mode comment-dwim-2 neotree hl-todo auto-complete doom-modeline doom-themes org-bullets yasnippet pdf-tools cdlatex org auctex ## flycheck tide)))
+		(exec-path-from-shell indent-guide csv-mode org-pomodoro elpygen ein markdown-mode magit elpy multiple-cursors dimmer highlight-symbol org-journal org-capture-pop-frame org-alert pandoc-mode comment-dwim-2 neotree hl-todo auto-complete doom-modeline doom-themes org-bullets yasnippet pdf-tools cdlatex org auctex ## flycheck tide)))
+ '(python-shell-interpreter "python3.7")
  '(safe-local-variable-values
 	 (quote
 		((eval add-hook
@@ -47,12 +53,12 @@
 		[152 195 121]
 		[198 120 221]
 		[86 182 194]]))
+
+(org-babel-load-file (concat user-emacs-directory "config.org"))
+;;; .emacs ends here
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
-
-(org-babel-load-file (concat user-emacs-directory "config.org"))
-;;; .emacs ends here
+ '(indent-guide-face ((t (:inherit hl-line :foreground "dimgray")))))

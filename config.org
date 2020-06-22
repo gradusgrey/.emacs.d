@@ -84,6 +84,8 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
+
+(global-set-key (kbd "C-` ") 'shell)
 #+END_SRC
 
 * Editing
@@ -165,7 +167,8 @@
   ("C-S-c C-S-c" . mc/edit-lines)
   ("C->" . mc/mark-next-like-this)
   ("C-<" . mc/mark-previous-like-this)
-  ("C-c C-<" . mc/mark-all-like-this))
+  ("C-c C-<" . mc/mark-all-like-this)
+)
 #+END_SRC
 
 ** TODO highlight-symbol
@@ -242,14 +245,14 @@
          "* TODO %^{Description}\n")
         ("j" "Journal Entry" entry
            (function org-journal-find-location)
-           "* %(format-time-string org-journal-time-format) %^{Title}\n%i%?")
+           "* %(format-time-string org-journal-time-format) %^{Title}\n%?")
         ("r" "Weekly Review" entry
            (function org-journal-find-location)
            "* Weekly Review %(format-time-string org-journal-time-format)\n%i%?" :created t)
         ("k" "Quote" entry (file "~/Org/Babel/quotes.org")
          "* %^{Author}, /%^{Work}/\n%U\n%i#+BEGIN_QUOTE\n%?\n#+END_QUOTE")
         ("b" "Book" entry (file "~/Org/Babel/Books.org")
-         "* %^{Work}\n+ %^{Author}\n+ %u")
+         "* TODO %^{Work}\n+ %^{Author}\n+ %u")
         )
       )
 )
@@ -288,7 +291,7 @@
   :config
   (setq org-pomodoro-ticking-sound-p nil)
   (setq org-pomodoro-start-sound-p nil)
-  (setq org-pomodoro-length 60)
+  (setq org-pomodoro-length 45)
   (setq org-pomodoro-short-break-length 5)
   (setq org-pomodoro-long-break-length 10))
 #+END_SRC
@@ -341,6 +344,9 @@
  ;; open preview using pdf-tools
  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
     TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
+
+ (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+ (setq reftex-plug-into-AUCTeX t)
 
    ;; DEPRECATED
    ;; use Skim as external viewer
