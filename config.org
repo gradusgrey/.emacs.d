@@ -146,18 +146,20 @@
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown"))
+  :init (setq markdown-command "multimarkdown")
+ )
 #+END_SRC
-** drag-stuff
+** =drag-stuff=
 #+BEGIN_SRC emacs-lisp
 (use-package drag-stuff
   :ensure t
   :config (drag-stuff-global-mode 1)
   :bind (
-  ("<C-M-up>" . drag-stuff-up)
-  ("<C-M-down>" . drag-stuff-down)
-  ("<C-M-left>" . drag-stuff-left)
-	("<C-M-right>" . drag-stuff-right)))
+    ("<C-M-up>" . drag-stuff-up)
+    ("<C-M-down>" . drag-stuff-down)
+   ("<C-M-left>" . drag-stuff-left)
+   ("<C-M-right>" . drag-stuff-right))
+ )
 #+END_SRC
 
 ** multicursor
@@ -179,6 +181,13 @@
 (global-set-key [(meta f3)] 'highlight-symbol-query-replace)
 #+END_SRC
 
+** =focus=
+#+BEGIN_SRC emacs-lisp
+(use-package focus
+  :ensure t
+  :hook ((LaTeX-mode . focus-mode))
+ )
+#+END_SRC
 * org-mode
 ** prerequisite
 #+BEGIN_SRC
@@ -195,15 +204,8 @@
 				 ("C-c c" . org-capture)
 				 ("C-c b" . org-switchb)
 				 ("C-c C-x C-o" . org-clock-out)
-				 ("C-c C-x C-i" . org-clock-in-anywhere)
 				 )
 	:config
-	(defun org-clock-in-anywhere (&optional select)
-		"Clock in. If called w/o prefix, check whether we are in an org-mode buffer first."
-		(interactive "P")
-		(if select
-				(org-clock-in select)
-			(if (equal major-mode 'org-mode) (org-clock-in) (error "Not in Org-mode"))))
 	(setq org-agenda-files '("~/Org" "~/Org/journal")
 				org-clock-persist 'history
 				org-startup-indented t
@@ -251,7 +253,7 @@
            "* Weekly Review %(format-time-string org-journal-time-format)\n%i%?" :created t)
         ("k" "Quote" entry (file "~/Org/Babel/quotes.org")
          "* %^{Author}, /%^{Work}/\n%U\n%i#+BEGIN_QUOTE\n%?\n#+END_QUOTE")
-        ("b" "Book" entry (file "~/Org/Babel/Books.org")
+        ("b" "Book" entry (file "~/Org/Babel/books.org")
          "* TODO %^{Work}\n+ %^{Author}\n+ %u")
         )
       )
@@ -289,11 +291,14 @@
   :after org
   :bind (("C-c p" . org-pomodoro))
   :config
-  (setq org-pomodoro-ticking-sound-p nil)
-  (setq org-pomodoro-start-sound-p nil)
-  (setq org-pomodoro-length 45)
-  (setq org-pomodoro-short-break-length 5)
-  (setq org-pomodoro-long-break-length 10))
+  (setq org-pomodoro-ticking-sound-p nil
+	      org-pomodoro-length 45
+        org-pomodoro-short-break-length 5
+        org-pomodoro-long-break-length 10
+        org-pomodoro-finished-sound "~/.emacs.d/audio/goes-without-saying.mp3"
+        org-pomodoro-short-break-sound "~/.emacs.d/audio/deduction.mp3"
+        org-pomodoro-long-break-sound "~/.emacs.d/audio/solemn.mp3")
+)
 #+END_SRC
 ** TODO org-alert
 #+BEGIN_SRC emacs-lisp
