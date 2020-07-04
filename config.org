@@ -88,6 +88,13 @@
 (global-set-key (kbd "C-` ") 'shell)
 #+END_SRC
 
+** =alert=
+#+BEGIN_SRC emacs-lisp
+(use-package alert
+  :commands (alert)
+  :init
+  (setq alert-default-style 'notifier))
+#+END_SRC
 * Editing
 ** Type with ease
 #+BEGIN_SRC emacs-lisp
@@ -189,6 +196,9 @@
  )
 #+END_SRC
 * org-mode
+:LOGBOOK:
+CLOCK: [2020-07-04 Sat 11:54]--[2020-07-04 Sat 11:56] =>  0:02
+:END:
 ** prerequisite
 #+BEGIN_SRC
 (global-font-lock-mode 1)
@@ -286,27 +296,45 @@
 
 ** =org-pomodoro=
 #+BEGIN_SRC emacs-lisp
-(use-package org-pomodoro
-  :ensure t
-  :after org
-  :bind (("C-c p" . org-pomodoro))
-  :config
-  (setq org-pomodoro-ticking-sound-p nil
-	      org-pomodoro-length 45
-        org-pomodoro-short-break-length 5
-        org-pomodoro-long-break-length 10
-        org-pomodoro-finished-sound "~/.emacs.d/audio/goes-without-saying.mp3"
-        org-pomodoro-short-break-sound "~/.emacs.d/audio/deduction.mp3"
-        org-pomodoro-long-break-sound "~/.emacs.d/audio/solemn.mp3")
-)
-#+END_SRC
-** TODO org-alert
-#+BEGIN_SRC emacs-lisp
-(use-package org-alert
-  :ensure t
-  :init
-  (setq alert-default-style 'libnotify)
+  (use-package org-pomodoro
+    :ensure t
+    :after org
+    :bind (("C-c p" . org-pomodoro))
+    :config
+    (setq org-pomodoro-ticking-sound-p nil
+          org-pomodoro-length 50
+          org-pomodoro-short-break-length 5
+          org-pomodoro-long-break-length 10
+          org-pomodoro-long-break-frequency 2
+          org-pomodoro-finished-sound "~/.emacs.d/audio/goes-without-saying.mp3"
+          org-pomodoro-short-break-sound "~/.emacs.d/audio/deduction.mp3"
+          org-pomodoro-long-break-sound "~/.emacs.d/audio/solemn.mp3")
   )
+
+  (defun notify-osx (title message)
+    (call-process "terminal-notifier"
+                  nil 0 nil
+                  "-group" "Emacs"
+                  "-title" title
+                  "-sender" "org.gnu.Emacs"
+                  "-message" message))
+
+  ;; org-pomodoro mode hooks
+  (add-hook 'org-pomodoro-finished-hook
+            (lambda ()
+            (notify-osx "Pomodoro completed!" "Time for a break.")))
+
+  (add-hook 'org-pomodoro-break-finished-hook
+            (lambda ()
+            (notify-osx "Pomodoro Short Break Finished" "Ready for Another?")))
+
+  (add-hook 'org-pomodoro-long-break-finished-hook
+            (lambda ()
+              (notify-osx "Pomodoro Long Break Finished" "Ready for Another?")))
+
+  (add-hook 'org-pomodoro-killed-hook
+            (lambda ()
+            (notify-osx "Pomodoro Killed" "One does not simply kill a pomodoro!")))
 #+END_SRC
 * LaTeX
 ** Set path
@@ -323,7 +351,7 @@
 (eval-after-load 'latex
   '(setq LaTeX-clean-intermediate-suffixes
          (append LaTeX-clean-intermediate-suffixes
-                 (list "\\.fdb_latexmk" "\\.tex~" "\\.log"))
+                 (list "\\.fdb_latexmk" "\\.tex~" "\\.log" "\\.tdo"))
          LaTeX-clean-output-suffixes
          (append LaTeX-clean-output-suffixes
                  (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
