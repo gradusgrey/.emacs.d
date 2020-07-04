@@ -38,13 +38,6 @@
 	 (quote
 		(exec-path-from-shell indent-guide csv-mode org-pomodoro elpygen ein markdown-mode magit elpy multiple-cursors dimmer highlight-symbol org-journal org-capture-pop-frame org-alert pandoc-mode comment-dwim-2 neotree hl-todo auto-complete doom-modeline doom-themes org-bullets yasnippet pdf-tools cdlatex org auctex ## flycheck tide)))
  '(python-shell-interpreter "python3.7")
- '(safe-local-variable-values
-	 (quote
-		((eval add-hook
-					 (quote after-save-hook)
-					 (lambda nil
-						 (org-babel-tangle))
-					 nil t))))
  '(tetris-x-colors
 	 [[229 192 123]
 		[97 175 239]

@@ -296,45 +296,20 @@ CLOCK: [2020-07-04 Sat 11:54]--[2020-07-04 Sat 11:56] =>  0:02
 
 ** =org-pomodoro=
 #+BEGIN_SRC emacs-lisp
-  (use-package org-pomodoro
-    :ensure t
-    :after org
-    :bind (("C-c p" . org-pomodoro))
-    :config
-    (setq org-pomodoro-ticking-sound-p nil
-          org-pomodoro-length 50
-          org-pomodoro-short-break-length 5
-          org-pomodoro-long-break-length 10
-          org-pomodoro-long-break-frequency 2
-          org-pomodoro-finished-sound "~/.emacs.d/audio/goes-without-saying.mp3"
-          org-pomodoro-short-break-sound "~/.emacs.d/audio/deduction.mp3"
-          org-pomodoro-long-break-sound "~/.emacs.d/audio/solemn.mp3")
-  )
-
-  (defun notify-osx (title message)
-    (call-process "terminal-notifier"
-                  nil 0 nil
-                  "-group" "Emacs"
-                  "-title" title
-                  "-sender" "org.gnu.Emacs"
-                  "-message" message))
-
-  ;; org-pomodoro mode hooks
-  (add-hook 'org-pomodoro-finished-hook
-            (lambda ()
-            (notify-osx "Pomodoro completed!" "Time for a break.")))
-
-  (add-hook 'org-pomodoro-break-finished-hook
-            (lambda ()
-            (notify-osx "Pomodoro Short Break Finished" "Ready for Another?")))
-
-  (add-hook 'org-pomodoro-long-break-finished-hook
-            (lambda ()
-              (notify-osx "Pomodoro Long Break Finished" "Ready for Another?")))
-
-  (add-hook 'org-pomodoro-killed-hook
-            (lambda ()
-            (notify-osx "Pomodoro Killed" "One does not simply kill a pomodoro!")))
+(use-package org-pomodoro
+  :ensure t
+  :after org
+  :bind (("C-c p" . org-pomodoro))
+  :config
+  (setq org-pomodoro-ticking-sound-p nil
+        org-pomodoro-length 50
+        org-pomodoro-short-break-length 5
+        org-pomodoro-long-break-length 10
+        org-pomodoro-long-break-frequency 2
+        org-pomodoro-finished-sound "~/.emacs.d/audio/goes-without-saying.mp3"
+        org-pomodoro-short-break-sound "~/.emacs.d/audio/deduction.mp3"
+        org-pomodoro-long-break-sound "~/.emacs.d/audio/solemn.mp3")
+)
 #+END_SRC
 * LaTeX
 ** Set path
@@ -348,58 +323,58 @@ CLOCK: [2020-07-04 Sat 11:54]--[2020-07-04 Sat 11:56] =>  0:02
 
 ** =AUCTeX=
 #+BEGIN_SRC emacs-lisp
-(eval-after-load 'latex
-  '(setq LaTeX-clean-intermediate-suffixes
-         (append LaTeX-clean-intermediate-suffixes
-                 (list "\\.fdb_latexmk" "\\.tex~" "\\.log" "\\.tdo"))
-         LaTeX-clean-output-suffixes
-         (append LaTeX-clean-output-suffixes
-                 (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
+  (eval-after-load 'latex
+    '(setq LaTeX-clean-intermediate-suffixes
+           (append LaTeX-clean-intermediate-suffixes
+                   (list "\\.fdb_latexmk" "\\.tex~" "\\.log" "\\.tdo"))
+           LaTeX-clean-output-suffixes
+           (append LaTeX-clean-output-suffixes
+                   (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
 
-(use-package tex
-  :ensure auctex
-  :mode ("\\.tex\\'" . LaTeX-mode)
-  :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
-  :config
-  (setq TeX-auto-save t
-        TeX-parse-self t
-        LaTeX-electric-left-right-brace 1 ;; automatic close tags
-        TeX-source-correlate-method 'synctex
-        TeX-source-correlate-mode t
-        TeX-source-correlate-start-server t)
+  (use-package tex
+    :ensure auctex
+    :mode ("\\.tex\\'" . LaTeX-mode)
+    :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
+    :config
+    (setq TeX-auto-save t
+          TeX-parse-self t
+          LaTeX-electric-left-right-brace 1 ;; automatic close tags
+          TeX-source-correlate-method 'synctex
+          TeX-source-correlate-mode t
+          TeX-source-correlate-start-server t)
 
-  (setq-default TeX-master nil)
-  ;; matching dollar sign
-  (add-hook 'LaTeX-mode-hook
-            (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
-            'TeX-source-correlate-mode ;; correlate enabled
-            )
- ;; open preview using pdf-tools
- (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-    TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
+    (setq-default TeX-master nil)
+    ;; matching dollar sign
+    (add-hook 'LaTeX-mode-hook
+              (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
+              'TeX-source-correlate-mode ;; correlate enabled
+              )
+   ;; open preview using pdf-tools
+   ;; (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+   ;;    TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
 
- (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
- (setq reftex-plug-into-AUCTeX t)
+   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+   (setq reftex-plug-into-AUCTeX t)
 
-   ;; DEPRECATED
-   ;; use Skim as external viewer
-   ;(add-hook 'LaTeX-mode-hook
-   ;           (lambda()
-   ;           (add-to-list 'TeX-expand-list
-   ;                        '("%q" skim-make-url))))
-   ;(defun skim-make-url ()
-   ;	(concat
-   ;	 (TeX-current-line)
-   ;	 " \""
-   ;	 (expand-file-name (funcall file (TeX-output-extension) t)
-   ;                    (file-name-directory (TeX-master-file)))
-   ;	 "\" \""
-   ;	 (buffer-file-name)
-   ;	 "\""))
-   ;(setq TeX-view-program-list
-   ;			'(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
-   ;(setq TeX-view-program-selection '((output-pdf "Skim")))
-)
+     ;; DEPRECATED
+     ;; use Skim as external viewer
+     (add-hook 'LaTeX-mode-hook
+               (lambda()
+               (add-to-list 'TeX-expand-list
+                            '("%q" skim-make-url))))
+     (defun skim-make-url ()
+      (concat
+       (TeX-current-line)
+       " \""
+       (expand-file-name (funcall file (TeX-output-extension) t)
+                        (file-name-directory (TeX-master-file)))
+       "\" \""
+       (buffer-file-name)
+       "\""))
+     (setq TeX-view-program-list
+          '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
+     (setq TeX-view-program-selection '((output-pdf "Skim")))
+  )
 #+END_SRC
 ** =cdlatex=
 #+BEGIN_SRC emacs-lisp
