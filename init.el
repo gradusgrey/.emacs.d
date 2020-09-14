@@ -16,14 +16,15 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auto-revert-check-vc-info nil)
- '(cdlatex-math-modify-prefix 96 t)
- '(cdlatex-math-symbol-prefix 64 t)
+ '(cdlatex-math-modify-prefix 96)
+ '(cdlatex-math-symbol-prefix 64)
  '(custom-safe-themes
 	 (quote
 		("1ed5c8b7478d505a358f578c00b58b430dde379b856fbcb60ed8d345fc95594e" default)))
  '(doc-view-continuous t)
  '(doom-themes-enable-bold t)
  '(indent-guide-global-mode t)
+ '(org-clock-persist (quote history))
  '(org-journal-date-format "%A, %m/%d/%Y")
  '(org-journal-dir "~/Org/journal/")
  '(org-journal-enable-encryption t)

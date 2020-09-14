@@ -293,7 +293,7 @@
   :bind (("C-c p" . org-pomodoro))
   :config
   (setq org-pomodoro-ticking-sound-p nil
-        org-clock-modeline-total 'today
+        org-clock-mode-line-total 'today
         org-pomodoro-length 50
         org-pomodoro-short-break-length 5
         org-pomodoro-long-break-length 10
@@ -342,19 +342,19 @@
               'TeX-source-correlate-mode ;; correlate enabled
               )
    ;; open preview using pdf-tools
-   ;; (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-   ;;    TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
+    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+       TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
 
    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
    (setq reftex-plug-into-AUCTeX t)
 
      ;; DEPRECATED
      ;; use Skim as external viewer
-     (add-hook 'LaTeX-mode-hook
-               (lambda()
-               (add-to-list 'TeX-expand-list
-                            '("%q" skim-make-url))))
-     (defun skim-make-url ()
+     ;; (add-hook 'LaTeX-mode-hook
+     ;;           (lambda()
+     ;;           (add-to-list 'TeX-expand-list
+     ;;                        '("%q" skim-make-url))))
+    (defun skim-make-url ()
       (concat
        (TeX-current-line)
        " \""
@@ -399,6 +399,7 @@
           (?+ ("\\oplus"))
           (?| ("\\mid"))
           (?F ("\\Phi"))
+          (?n ("\\nabla"))
 					))
 	(setq cdlatex-math-modify-alist
 				'((?b "\\mathbb" nil t nil nil)
