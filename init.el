@@ -37,16 +37,15 @@
 		(org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
  '(package-selected-packages
 	 (quote
-		(exec-path-from-shell indent-guide csv-mode org-pomodoro elpygen ein markdown-mode magit elpy multiple-cursors dimmer highlight-symbol org-journal org-capture-pop-frame org-alert pandoc-mode comment-dwim-2 neotree hl-todo auto-complete doom-modeline doom-themes org-bullets yasnippet pdf-tools cdlatex org auctex ## flycheck tide)))
- '(python-shell-interpreter "python3.7")
- '(tetris-x-colors
-	 [[229 192 123]
-		[97 175 239]
-		[209 154 102]
-		[224 108 117]
-		[152 195 121]
-		[198 120 221]
-		[86 182 194]]))
+		(exec-path-from-shell indent-guide csv-mode org-pomodoro
+ elpygen ein markdown-mode magit elpy multiple-cursors dimmer
+ highlight-symbol org-journal org-capture-pop-frame org-alert
+ pandoc-mode comment-dwim-2 neotree hl-todo auto-complete
+ doom-modeline doom-themes org-bullets yasnippet pdf-tools
+ cdlatex org auctex ## flycheck tide)))
+ '(python-shell-interpreter "python3.7") '(tetris-x-colors [[229
+ 192 123] [97 175 239] [209 154 102] [224 108 117] [152 195 121]
+ [198 120 221] [86 182 194]]))
 
 (org-babel-load-file (concat user-emacs-directory "config.org"))
 ;;; .emacs ends here

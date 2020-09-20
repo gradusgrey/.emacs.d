@@ -106,6 +106,7 @@
 (global-flycheck-mode 1) ;; flycheck
 (add-hook 'text-mode-hook 'flyspell-mode) ;; flyspell
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+(setq ispell-program-name "hunspell")
 
 (setq-default auto-fill-function 'do-auto-fill) ;; auto-fill-mode enabled universally
 (setq-default fill-column 85)
@@ -114,6 +115,17 @@
 (setq-default tab-width 2)
 
 (electric-pair-mode 1) ;; automatically close parens, etc.
+
+(defun transpose-windows ()
+  (interactive)
+  (let ((this-buffer (window-buffer (selected-window)))
+        (other-buffer (prog2
+                          (other-window +1)
+                          (window-buffer (selected-window))
+                        (other-window -1))))
+    (switch-to-buffer other-buffer)
+    (switch-to-buffer-other-window this-buffer)
+    (other-window -1)))
 #+END_SRC
 ** Code completion
 #+BEGIN_SRC emacs-lisp
@@ -131,7 +143,7 @@
 )
 #+END_SRC
 
-** TODO Spell check
+** TODO Quick dictionary
 #+BEGIN_SRC emacs-lisp
 ;; quick dictionary and thesaurus
 (use-package define-word
@@ -341,9 +353,10 @@
               (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
               'TeX-source-correlate-mode ;; correlate enabled
               )
+
    ;; open preview using pdf-tools
-    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-       TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
+   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+         TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
 
    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
    (setq reftex-plug-into-AUCTeX t)
@@ -363,9 +376,9 @@
        "\" \""
        (buffer-file-name)
        "\""))
-     (setq TeX-view-program-list
+     ;; (setq TeX-view-program-list
           '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
-     (setq TeX-view-program-selection '((output-pdf "Skim")))
+     ;; (setq TeX-view-program-selection '((output-pdf "Skim")))
   )
 #+END_SRC
 ** =cdlatex=
@@ -388,24 +401,27 @@
 					(?e ("\\varepsilon"))
 					(?> ("\\geq"))
 					(?< ("\\leq" "\\vartriangleleft"))
-					(123 ("\\subseteq"))
-					(125 ("\\supseteq"))
+					(123 ("\\subset"))
+					(125 ("\\supset"))
           (?~ ("\\simeq" "\\approx"))
 					(?! ("\\neq" "\\neg"))
           (?c ("\\circ"))
           (?. ("\\ldots" "\\cdots"))
           (?[ ("\\Longleftarrow"))
-          (?] ("\\Longrightarrow"))
+          (?] ("\\Longrightarrow" "Rightarrow"))
           (?+ ("\\oplus"))
           (?| ("\\mid"))
           (?F ("\\Phi"))
           (?n ("\\nabla"))
+          (?t ("\\tau" "\\to"))
 					))
 	(setq cdlatex-math-modify-alist
 				'((?b "\\mathbb" nil t nil nil)
 					(?c "\\mathcal" nil t nil nil)
 					(?2 "\\sqrt" nil t nil nil)
 					(?t "\\text" nil t nil nil)
+					(?v "\\vec" nil t nil nil)
+          (?f "\\mathfrak" nil t nil nil)
 					))
   (setq cdlatex-command-alist
       '(("lcm" "Insert \\text{lcm}"
