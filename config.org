@@ -81,9 +81,16 @@
 ;; add org-mode to prog-mode
 (add-hook 'org-mode-hook
           (lambda () (run-hooks 'prog-mode-hook)))
+
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
+
+(add-to-list
+ 'display-buffer-alist
+ '("\\.pdf$*" (display-buffer-reuse-window display-buffer-in-side-window)
+   (window-height . 20)
+   (side . top)))
 
 (add-hook 'org-mode-hook
           (lambda () (org-indent-mode t)) t)
@@ -327,59 +334,59 @@
 
 ** =AUCTeX=
 #+BEGIN_SRC emacs-lisp
-  (eval-after-load 'latex
-    '(setq LaTeX-clean-intermediate-suffixes
-           (append LaTeX-clean-intermediate-suffixes
-                   (list "\\.fdb_latexmk" "\\.tex~" "\\.log" "\\.tdo"))
-           LaTeX-clean-output-suffixes
-           (append LaTeX-clean-output-suffixes
-                   (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
+(eval-after-load 'latex
+  '(setq LaTeX-clean-intermediate-suffixes
+         (append LaTeX-clean-intermediate-suffixes
+                 (list "\\.fdb_latexmk" "\\.tex~" "\\.log" "\\.tdo"))
+         LaTeX-clean-output-suffixes
+         (append LaTeX-clean-output-suffixes
+                 (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
 
-  (use-package tex
-    :ensure auctex
-    :mode ("\\.tex\\'" . LaTeX-mode)
-    :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
-    :config
-    (setq TeX-auto-save t
-          TeX-parse-self t
-          LaTeX-electric-left-right-brace 1 ;; automatic close tags
-          TeX-source-correlate-method 'synctex
-          TeX-source-correlate-mode t
-          TeX-source-correlate-start-server t)
+(use-package tex
+  :ensure auctex
+  :mode ("\\.tex\\'" . LaTeX-mode)
+  :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
+  :config
+  (setq TeX-auto-save t
+        TeX-parse-self t
+        LaTeX-electric-left-right-brace 1 ;; automatic close tags
+        TeX-source-correlate-method 'synctex
+        TeX-source-correlate-mode t
+        TeX-source-correlate-start-server t)
 
-    (setq-default TeX-master nil)
-    ;; matching dollar sign
-    (add-hook 'LaTeX-mode-hook
-              (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
-              'TeX-source-correlate-mode ;; correlate enabled
-              )
+  (setq-default TeX-master nil)
+  ;; matching dollar sign
+  (add-hook 'LaTeX-mode-hook
+            (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
+            'TeX-source-correlate-mode ;; correlate enabled
+            )
 
-   ;; open preview using pdf-tools
-   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-         TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
+ ;; open preview using pdf-tools
+ (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+       TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
 
-   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-   (setq reftex-plug-into-AUCTeX t)
+ (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+ (setq reftex-plug-into-AUCTeX t)
 
-     ;; DEPRECATED
-     ;; use Skim as external viewer
-     ;; (add-hook 'LaTeX-mode-hook
-     ;;           (lambda()
-     ;;           (add-to-list 'TeX-expand-list
-     ;;                        '("%q" skim-make-url))))
-    (defun skim-make-url ()
-      (concat
-       (TeX-current-line)
-       " \""
-       (expand-file-name (funcall file (TeX-output-extension) t)
-                        (file-name-directory (TeX-master-file)))
-       "\" \""
-       (buffer-file-name)
-       "\""))
-     ;; (setq TeX-view-program-list
-          '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
-     ;; (setq TeX-view-program-selection '((output-pdf "Skim")))
-  )
+   ;; DEPRECATED
+   ;; use Skim as external viewer
+   ;; (add-hook 'LaTeX-mode-hook
+   ;;           (lambda()
+   ;;           (add-to-list 'TeX-expand-list
+   ;;                        '("%q" skim-make-url))))
+;;   (defun skim-make-url ()
+;;     (concat
+;;      (TeX-current-line)
+;;      " \""
+;;      (expand-file-name (funcall file (TeX-output-extension) t)
+;;                       (file-name-directory (TeX-master-file)))
+;;      "\" \""
+;;      (buffer-file-name)
+;;      "\""))
+;;    (setq TeX-view-program-list
+;;         '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
+;;    (setq TeX-view-program-selection '((output-pdf "Skim")))
+)
 #+END_SRC
 ** =cdlatex=
 #+BEGIN_SRC emacs-lisp
