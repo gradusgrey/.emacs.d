@@ -42,9 +42,11 @@
 (global-set-key [f8] 'neotree-toggle) ;; side bar
 
 (global-hl-line-mode 1) ;; highlight current line
-(global-hl-todo-mode 1) ;; highlight TODOs
 (show-paren-mode 1) ;; highlight matching parens
 (setq show-paren-delay 0.0) ;; no delay in showing paren
+
+(global-hl-todo-mode 1) ;; highlight TODOs
+(add-hook 'TeX-update-style-hook 'hl-todo-mode)
 (setq hl-todo-highlight-punctuation ":"
 			hl-todo-keyword-faces
 			'(("TODO"       error bold)
@@ -53,7 +55,6 @@
 			hl-todo-include-modes
 			(quote (LaTeX-mode emacs-lisp-mode)))
 #+END_SRC
-
 *** =indent-guide=
 #+BEGIN_SRC emacs-lisp
 (use-package indent-guide
@@ -334,59 +335,59 @@
 
 ** =AUCTeX=
 #+BEGIN_SRC emacs-lisp
-(eval-after-load 'latex
-  '(setq LaTeX-clean-intermediate-suffixes
-         (append LaTeX-clean-intermediate-suffixes
-                 (list "\\.fdb_latexmk" "\\.tex~" "\\.log" "\\.tdo"))
-         LaTeX-clean-output-suffixes
-         (append LaTeX-clean-output-suffixes
-                 (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
+  (eval-after-load 'latex
+    '(setq LaTeX-clean-intermediate-suffixes
+           (append LaTeX-clean-intermediate-suffixes
+                   (list "\\.fdb_latexmk" "\\.tex~" "\\.log" "\\.tdo"))
+           LaTeX-clean-output-suffixes
+           (append LaTeX-clean-output-suffixes
+                   (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
 
-(use-package tex
-  :ensure auctex
-  :mode ("\\.tex\\'" . LaTeX-mode)
-  :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
-  :config
-  (setq TeX-auto-save t
-        TeX-parse-self t
-        LaTeX-electric-left-right-brace 1 ;; automatic close tags
-        TeX-source-correlate-method 'synctex
-        TeX-source-correlate-mode t
-        TeX-source-correlate-start-server t)
+  (use-package tex
+    :ensure auctex
+    :mode ("\\.tex\\'" . LaTeX-mode)
+    :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
+    :config
+    (setq TeX-auto-save t
+          TeX-parse-self t
+          LaTeX-electric-left-right-brace 1 ;; automatic close tags
+          TeX-source-correlate-method 'synctex
+          TeX-source-correlate-mode t
+          TeX-source-correlate-start-server t)
 
-  (setq-default TeX-master nil)
-  ;; matching dollar sign
-  (add-hook 'LaTeX-mode-hook
-            (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
-            'TeX-source-correlate-mode ;; correlate enabled
-            )
+    (setq-default TeX-master nil)
+    ;; matching dollar sign
+    (add-hook 'LaTeX-mode-hook
+              (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
+              'TeX-source-correlate-mode ;; correlate enabled
+              )
 
- ;; open preview using pdf-tools
- (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-       TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
+  ;;  ;; open preview using pdf-tools
+  ;;  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+  ;;        TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
 
- (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
- (setq reftex-plug-into-AUCTeX t)
+  ;;  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  ;;  (setq reftex-plug-into-AUCTeX t)
 
-   ;; DEPRECATED
-   ;; use Skim as external viewer
-   ;; (add-hook 'LaTeX-mode-hook
-   ;;           (lambda()
-   ;;           (add-to-list 'TeX-expand-list
-   ;;                        '("%q" skim-make-url))))
-;;   (defun skim-make-url ()
-;;     (concat
-;;      (TeX-current-line)
-;;      " \""
-;;      (expand-file-name (funcall file (TeX-output-extension) t)
-;;                       (file-name-directory (TeX-master-file)))
-;;      "\" \""
-;;      (buffer-file-name)
-;;      "\""))
-;;    (setq TeX-view-program-list
-;;         '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
-;;    (setq TeX-view-program-selection '((output-pdf "Skim")))
-)
+  ;; ;; DEPRECATED
+  ;; ;; use Skim as external viewer
+  ;;  (add-hook 'LaTeX-mode-hook
+  ;;            (lambda()
+  ;;            (add-to-list 'TeX-expand-list
+  ;;                         '("%q" skim-make-url))))
+  ;; (defun skim-make-url ()
+  ;;   (concat
+  ;;    (TeX-current-line)
+  ;;    " \""
+  ;;    (expand-file-name (funcall file (TeX-output-extension) t)
+  ;;                     (file-name-directory (TeX-master-file)))
+  ;;    "\" \""
+  ;;    (buffer-file-name)
+  ;;    "\""))
+  ;;  (setq TeX-view-program-list
+  ;;       '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
+  ;;  (setq TeX-view-program-selection '((output-pdf "Skim")))
+  )
 #+END_SRC
 ** =cdlatex=
 #+BEGIN_SRC emacs-lisp
@@ -408,8 +409,8 @@
 					(?e ("\\varepsilon"))
 					(?> ("\\geq"))
 					(?< ("\\leq" "\\vartriangleleft"))
-					(123 ("\\subset"))
-					(125 ("\\supset"))
+					(123 ("\\subset" "\\subseteq"))
+					(125 ("\\supset" "\\supseteq"))
           (?~ ("\\simeq" "\\approx"))
 					(?! ("\\neq" "\\neg"))
           (?c ("\\circ"))
@@ -421,6 +422,8 @@
           (?F ("\\Phi"))
           (?n ("\\nabla"))
           (?t ("\\tau" "\\to"))
+          (?S ("\\sum"))
+          (?* ("\\times" "\\otimes"))
 					))
 	(setq cdlatex-math-modify-alist
 				'((?b "\\mathbb" nil t nil nil)
@@ -429,6 +432,8 @@
 					(?t "\\text" nil t nil nil)
 					(?v "\\vec" nil t nil nil)
           (?f "\\mathfrak" nil t nil nil)
+          (?m "\\pmod" nil t nil nil)
+          (?_ "\\underline" "\\underline" t nil nil)
 					))
   (setq cdlatex-command-alist
       '(("lcm" "Insert \\text{lcm}"
