@@ -344,7 +344,7 @@
            (append LaTeX-clean-output-suffixes
                    (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
 
-  (use-package tex
+(use-package tex
     :ensure auctex
     :mode ("\\.tex\\'" . LaTeX-mode)
     :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
@@ -367,28 +367,27 @@
   ;;  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
   ;;        TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
 
-  ;;  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-  ;;  (setq reftex-plug-into-AUCTeX t)
-
-  ;; ;; DEPRECATED
-  ;; ;; use Skim as external viewer
-  ;;  (add-hook 'LaTeX-mode-hook
-  ;;            (lambda()
-  ;;            (add-to-list 'TeX-expand-list
-  ;;                         '("%q" skim-make-url))))
-  ;; (defun skim-make-url ()
-  ;;   (concat
-  ;;    (TeX-current-line)
-  ;;    " \""
-  ;;    (expand-file-name (funcall file (TeX-output-extension) t)
-  ;;                     (file-name-directory (TeX-master-file)))
-  ;;    "\" \""
-  ;;    (buffer-file-name)
-  ;;    "\""))
-  ;;  (setq TeX-view-program-list
-  ;;       '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
-  ;;  (setq TeX-view-program-selection '((output-pdf "Skim")))
-  )
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  (setq reftex-plug-into-AUCTeX t)
+   ;; DEPRECATED
+   ;; use Skim as external viewer
+    (add-hook 'LaTeX-mode-hook
+              (lambda()
+              (add-to-list 'TeX-expand-list
+                           '("%q" skim-make-url))))
+(defun skim-make-url ()
+  (concat
+   (TeX-current-line)
+   " \""
+   (expand-file-name (funcall file (TeX-output-extension) t)
+                    (file-name-directory (TeX-master-file)))
+   "\" \""
+   (buffer-file-name)
+   "\""))
+ (setq TeX-view-program-list
+      '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
+ (setq TeX-view-program-selection '((output-pdf "Skim")))
+)
 #+END_SRC
 ** =cdlatex=
 #+BEGIN_SRC emacs-lisp
@@ -415,7 +414,7 @@
           (?~ ("\\simeq" "\\approx"))
 					(?! ("\\neq" "\\neg"))
           (?c ("\\circ"))
-          (?. ("\\ldots" "\\cdots"))
+          (?. ("\\ldots" "\\cdot"))
           (?[ ("\\Longleftarrow"))
           (?] ("\\Longrightarrow" "\\Rightarrow"))
           (?+ ("\\oplus"))
@@ -435,6 +434,7 @@
           (?f "\\mathfrak" nil t nil nil)
           (?m "\\pmod" nil t nil nil)
           (?_ "\\underline" "\\underline" t nil nil)
+          (?~ "\\widetilde" nil t nil nil)
 					))
   (setq cdlatex-command-alist
       '(("lcm" "Insert \\text{lcm}"
