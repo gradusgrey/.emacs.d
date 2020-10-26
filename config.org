@@ -315,6 +315,7 @@
   :config
   (setq org-pomodoro-ticking-sound-p nil
         org-clock-mode-line-total 'today
+        org-pomodoro-manual-break t
         org-pomodoro-length 50
         org-pomodoro-short-break-length 5
         org-pomodoro-long-break-length 10
