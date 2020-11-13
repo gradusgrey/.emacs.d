@@ -436,6 +436,7 @@
           (?m "\\pmod" nil t nil nil)
           (?_ "\\underline" "\\underline" t nil nil)
           (?~ "\\widetilde" nil t nil nil)
+          (?^ "\\widehat" nil t nil nil)
 					))
   (setq cdlatex-command-alist
       '(("lcm" "Insert \\text{lcm}"
