@@ -323,6 +323,7 @@
         org-pomodoro-long-break-length 10
         org-pomodoro-long-break-frequency 2
         org-pomodoro-finished-sound "~/.emacs.d/audio/goes-without-saying.mp3"
+        org-pomodoro-overtime-sound "~/.emacs.d/audio/goes-without-saying.mp3"
         org-pomodoro-short-break-sound "~/.emacs.d/audio/deduction.mp3"
         org-pomodoro-long-break-sound "~/.emacs.d/audio/solemn.mp3")
 )
