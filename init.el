@@ -24,6 +24,9 @@
  '(doc-view-continuous t)
  '(doom-themes-enable-bold t)
  '(indent-guide-global-mode t)
+ '(org-agenda-files
+	 (quote
+		("/Users/chenyiran/Org/planning.org" "/Users/chenyiran/Org/emacs keybindings.org" "/Users/chenyiran/Org/notes.org" "/Users/chenyiran/Org/journal/2020.org")))
  '(org-clock-persist (quote history))
  '(org-journal-date-format "%A, %m/%d/%Y")
  '(org-journal-dir "~/Org/journal/")
