@@ -437,6 +437,7 @@
 					(?v "\\vec" nil t nil nil)
           (?f "\\mathfrak" nil t nil nil)
           (?m "\\pmod" nil t nil nil)
+          (?- "\\overline" nil t nil nil)
           (?_ "\\underline" nil t nil nil)
           (?~ "\\widetilde" nil t nil nil)
           (?^ "\\widehat" nil t nil nil)
