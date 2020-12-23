@@ -239,6 +239,7 @@
         org-todo-keywords (quote ((sequence "TODO" "IN PROGRESS" "|" "DONE")))
         org-todo-keyword-faces (quote (("IN PROGRESS" :foreground "orange" :weight bold)))
         org-clock-idle-time 15
+        agenda-skip-scheduled-if-deadline-is-shown 'repeated-after-deadline
 
         org-agenda-deadline-faces
         '((1.001 . error)
@@ -426,7 +427,7 @@
           (?F ("\\Phi"))
           (?n ("\\nabla"))
           (?t ("\\tau" "\\to"))
-          (?S ("\\sum"))
+          (?S ("\\sum" "\\Sigma"))
           (?* ("\\times" "\\otimes"))
 					))
 	(setq cdlatex-math-modify-alist
