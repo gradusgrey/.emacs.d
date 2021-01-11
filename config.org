@@ -250,7 +250,7 @@
         org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM"
         )
   (setq inhibit-compacting-font-caches t)
-  (add-to-list 'org-modules '(org-habit org-crypt))
+  ;; (add-to-list 'org-modules '(org-habit org-crypt))
   (add-to-list 'org-structure-template-alist '("sl" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
 )
 #+END_SRC
