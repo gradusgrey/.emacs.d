@@ -15,9 +15,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+	 ["#263238" "#ff5370" "#c3e88d" "#ffcb6b" "dark blue" "#c792ea" "#89DDFF" "#EEFFFF"])
  '(auto-revert-check-vc-info nil)
- '(cdlatex-math-modify-prefix 96)
- '(cdlatex-math-symbol-prefix 64)
+ '(cdlatex-math-modify-prefix 96 t)
+ '(cdlatex-math-symbol-prefix 64 t)
  '(custom-safe-themes
 	 (quote
 		("0ad7f1c71fd0289f7549f0454c9b12005eddf9b76b7ead32a24d9cb1d16cbcbd" "1ed5c8b7478d505a358f578c00b58b430dde379b856fbcb60ed8d345fc95594e" default)))
