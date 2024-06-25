@@ -3,13 +3,23 @@
 # group: skeleton
 # key: hw
 # --
+% -*- buffer-read-only: t -*-
 \documentclass[12pt]{article}
-\usepackage{amsmath, amsthm, amssymb, delarray, fancyhdr, todonotes, eufrak}
-\setlength{\marginparwidth}{3cm}
+\usepackage{amsmath, amsthm, amssymb, delarray, fancyhdr, todonotes, eufrak,
+hyperref, qtree, stmaryrd}
+% \input{fitch.sty}
+
+\usepackage[margin=1in]{geometry}
+\setlength{\marginparwidth}{2cm}
+\parindent=0pt
+
 \newenvironment{solution}
   {\begin{proof}[Solution]} {\end{proof}}
 
-\usepackage[margin=1in]{geometry}
+\newtheorem{thm}{Theorem}
+
+\theoremstyle{remark}
+\newtheorem{claim}{Claim}
 
 \pagestyle{fancy}
 \lhead{${1:name}}

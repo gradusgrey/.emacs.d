@@ -2,11 +2,11 @@
 # contributor : Mads D. Kristensen <madsdk@gmail.com>
 # key : fig
 # group: environments
-# name : \begin{figure} ... \end{figure}
+# name : figure
 # --
 \begin{figure}[htbp]
   \centering
-  $0
+  \includegraphics[width=0.8\linewidt]{$0}
   \caption{${1:caption}}
   \label{${2:"waiting for reftex-label call..."$(unless yas/modified-p (reftex-label nil 'dont-insert))}}
 \end{figure}
