@@ -1,4 +1,4 @@
-# -*- buffer-read-only: t; eval: (linum-mode 0)-*-
+# -*- buffer-read-only: t -*-
 #+TITLE: My Emacs configuration
 
 * General
@@ -14,26 +14,25 @@
   ;; (load-theme 'doom-one-light t)
 )
 
-(use-package all-the-icons
-  :ensure t)
-
-  (set-face-attribute 'default nil :height 165)
-  (setq ring-bell-function 'ignore) ;; disable bell
-  (tool-bar-mode -1) ;; disable ugly toolbar
-  (scroll-bar-mode -1) ;; disable ugly scroll bar
+(set-face-attribute 'default nil :height 165)
+(setq ring-bell-function 'ignore) ;; disable bell
+(tool-bar-mode -1) ;; disable ugly toolbar
+(scroll-bar-mode -1) ;; disable ugly scroll bar
 #+END_SRC
 
 *** More informative modeline and mini-buffer
 #+BEGIN_SRC emacs-lisp
+(display-time-mode 1) ;; displays time
+
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1)
-  :config (setq doom-modeline-height 15
+  :config (setq doom-modeline-height 30
                 doom-modeline-bar-width 3
-                doom-modeline-enable-word-count t)
+                doom-modeline-time-analogue-clock nil)
 )
 
-(display-time-mode 1) ;; displays time
+(setq mode-line-right-align 'right-margin)
 
 (use-package marginalia
   ;; Either bind `marginalia-cycle' globally or only in the minibuffer
@@ -43,7 +42,6 @@
 
   ;; The :init configuration is always executed (Not lazy!)
   :init
-
   ;; Must be in the :init section of use-package such that the mode gets
   ;; enabled right away. Note that this forces loading the package.
   (marginalia-mode))
@@ -185,18 +183,9 @@
 )
 
 (use-package yasnippet
-   :ensure t
-   :init
-   (yas-global-mode 1)
-)
-
-(defun my-macro-math-eval-and-round-region (beg end &optional digits)
-  (interactive "r\nP")
-  (macro-math-eval-region
-   beg end 1 (or digits 3)))
-
-(use-package macro-math
-  :bind ("\C-x~" . my-macro-math-eval-and-round-region)
+  :ensure t
+  :init
+  (yas-global-mode 1)
 )
 #+END_SRC
 
@@ -210,12 +199,14 @@
   :bind ("C-c t" . mw-thesaurus-lookup-at-point)
 )
 #+END_SRC
+
 ** Better comments
 #+BEGIN_SRC emacs-lisp
 (use-package comment-dwim-2
 	:bind ("M-;" . comment-dwim-2)
-	)
+)
 #+END_SRC
+
 ** =markdown-mode=
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
@@ -225,8 +216,9 @@
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "multimarkdown")
- )
+)
 #+END_SRC
+
 ** =drag-stuff=
 #+BEGIN_SRC emacs-lisp
 (use-package drag-stuff
@@ -266,6 +258,10 @@
 #+END_SRC
 ** =org=
 #+BEGIN_SRC emacs-lisp
+(setq org-edit-src-content-indentation 0
+      org-src-tab-acts-natively t
+      org-src-preserve-indentation t)
+
 (use-package org
   :mode ("\\.org$" . org-mode)
   :init (org-clock-persistence-insinuate)
@@ -277,7 +273,7 @@
          ("C-c C-x C-o" . org-clock-out)
          )
   :config
-	(setq org-agenda-files '("~/Org"))
+  (setq org-agenda-files '("~/Org"))
   (setq org-clock-persist 'history
         org-startup-indented t
         org-default-notes-file (concat org-directory "/notes.org")
@@ -372,6 +368,7 @@
         org-pomodoro-long-break-sound "~/.emacs.d/audio/solemn.mp3")
 )
 #+END_SRC
+
 * LaTeX
 ** Set path
 #+BEGIN_SRC emacs-lisp
@@ -527,6 +524,7 @@
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 #+end_src
+
 * python
 #+BEGIN_SRC emacs-lisp
 (use-package elpy
@@ -542,5 +540,5 @@
 
 (use-package ein
   :ensure t
-  )
+)
 #+END_SRC
