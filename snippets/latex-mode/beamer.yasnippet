@@ -5,33 +5,37 @@
 # name: \documentclass{beamer} ...
 # --
 \documentclass[xcolor=dvipsnames]{beamer}
+\usepackage{xcolor, hyperref, graphicx}
+\usepackage[style=authoryear, backend=biber]{biblatex}
+\addbibresource{HitchcockSober.bib}
+\DeclareNameAlias{sortname}{family-given}
 
-\usepackage{graphicx,subfigure,url}
-
-% example themes
 \usetheme{Frankfurt}
-\usecolortheme{seahorse}
-\usecolortheme{rose}
+\setbeamertemplate{footline}[frame number]
+\beamertemplatenavigationsymbolsempty{}
 
-% put page numbers
-% \setbeamertemplate{footline}[frame number]{}
-% remove navigation symbols
-% \setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footnote}{%
+  \tiny%
+  \parindent 1em\noindent%
+  \raggedright
+  \hbox to 1.8em{\hfil\insertfootnotemark}\insertfootnotetext\par%
+}%
+\setlength\footnotesep{0pt}
 
 \title{${1:Presentation Title}}
 \author{${2:Author Name}}
+\date{${3:Date}}
 
 \begin{document}
-	
-\frame[plain]{\titlepage}
-	
-\begin{frame}[plain]{Outline}
-	\tableofcontents
-\end{frame}
-	
-\section{${3:Example Section}}
-\begin{frame}{${4:Frame Title}}
+\frame{\titlepage}
 
+\section{Section Name}
+\begin{frame}{Frame Name}
+  \begin{block}{Corollary}
+  \end{block}
 \end{frame}
 
+\begin{frame}{References}
+  \printbibliography{}
+\end{frame}
 \end{document}

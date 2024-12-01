@@ -14,12 +14,17 @@
   ;; (load-theme 'doom-one-light t)
 )
 
-(set-face-attribute 'default nil :height 165)
+(custom-theme-set-faces
+   'user
+   '(variable-pitch ((t (:family "ETBembo" :height 1.27))))
+	 '(default ((t (:family "Monospace" :height 175))))
+	 '(fixed-pitch ((t (:family "Monospace" :height 175)))))
+
+(set-face-attribute 'default nil :height 175)
 (setq ring-bell-function 'ignore) ;; disable bell
 (tool-bar-mode -1) ;; disable ugly toolbar
 (scroll-bar-mode -1) ;; disable ugly scroll bar
 #+END_SRC
-
 *** More informative modeline and mini-buffer
 #+BEGIN_SRC emacs-lisp
 (display-time-mode 1) ;; displays time
@@ -30,29 +35,36 @@
   :config (setq doom-modeline-height 30
                 doom-modeline-bar-width 3
                 doom-modeline-time-analogue-clock nil)
-)
+	)
 
-(setq mode-line-right-align 'right-margin)
+(setq mode-line-right-align-edge 'right-margin)
 
 (use-package marginalia
   ;; Either bind `marginalia-cycle' globally or only in the minibuffer
-  :bind (("M-A" . marginalia-cycle)
-         :map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
-
-  ;; The :init configuration is always executed (Not lazy!)
+  :bind (:map minibuffer-local-map
+							("M-A" . marginalia-cycle))
   :init
-  ;; Must be in the :init section of use-package such that the mode gets
-  ;; enabled right away. Note that this forces loading the package.
   (marginalia-mode))
 
+(use-package vertico
+  :init
+  (vertico-mode)
+	(vertico-indexed-mode)
+  (vertico-reverse-mode)
+	:config
+	(setq read-file-name-completion-ignore-case t
+      read-buffer-completion-ignore-case t
+      completion-ignore-case t
+			vertico-resize t
+			vertico-cycle t)
+	)
 
 (use-package nyan-mode
   :init
   (nyan-mode)
   :config
   (setq nyan-wavy-trail t)
-)
+	)
 
 ;; do not load average data
 (setq display-time-default-load-average nil)
@@ -60,7 +72,6 @@
         '((format-time-string "%m/%d (%a) %H:%M")))
 (display-battery-mode t) ;; displays battery
 #+END_SRC
-
 *** Line/column numbers & Highlighting stuff
 #+BEGIN_SRC emacs-lisp
 (column-number-mode 1) ;; always displays the column number
@@ -114,16 +125,24 @@
 (add-hook 'org-mode-hook
           (lambda () (org-indent-mode t)) t)
 
-(global-set-key (kbd "C-` ") 'shell)
+(global-set-key (kbd "C-`") 'shell)
+(global-set-key (kbd "C-x v") 'variable-pitch-mode)
 
 (put 'text-scale-adjust 'disabled t)
 
 (setq confirm-kill-emacs 'y-or-n-p)
 
+(defun close-and-kill-this-pane ()
+	"If there are multiple windows, then close this pane and kill the buffer in it also."
+	(interactive)
+	(kill-this-buffer)
+  (if (not (one-window-p))
+			(delete-window)))
+(global-set-key (kbd "s-w") 'close-and-kill-this-pane)
+
 (global-set-key [(control wheel-up)] 'nil)
 (global-set-key [(control wheel-down)] 'nil)
 #+END_SRC
-
 ** =alert=
 #+BEGIN_SRC emacs-lisp
 (use-package alert
@@ -139,7 +158,6 @@
 (global-flycheck-mode 1) ;; flycheck
 (add-hook 'text-mode-hook 'flyspell-mode) ;; flyspell
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-(setq ispell-program-name "hunspell")
 (when (executable-find "hunspell")
   (setq-default ispell-program-name "hunspell")
   (setq ispell-really-hunspell t))
@@ -166,17 +184,6 @@
 #+END_SRC
 ** Code completion
 #+BEGIN_SRC emacs-lisp
-(use-package vertico
-  :init
-  (vertico-mode)
-  (vertico-indexed-mode)
-  (vertico-reverse-mode)
-
-  ;; Grow and shrink the Vertico minibuffer
-  (setq vertico-resize t)
-  (setq vertico-cycle t)
-)
-
 (use-package savehist
   :init
   (savehist-mode)
@@ -188,7 +195,6 @@
   (yas-global-mode 1)
 )
 #+END_SRC
-
 ** TODO Quick dictionary
 #+BEGIN_SRC emacs-lisp
 ;; quick dictionary and thesaurus
@@ -199,14 +205,12 @@
   :bind ("C-c t" . mw-thesaurus-lookup-at-point)
 )
 #+END_SRC
-
 ** Better comments
 #+BEGIN_SRC emacs-lisp
 (use-package comment-dwim-2
 	:bind ("M-;" . comment-dwim-2)
 )
 #+END_SRC
-
 ** =markdown-mode=
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
@@ -218,20 +222,17 @@
   :init (setq markdown-command "multimarkdown")
 )
 #+END_SRC
-
 ** =drag-stuff=
 #+BEGIN_SRC emacs-lisp
 (use-package drag-stuff
   :ensure t
   :config (drag-stuff-global-mode 1)
-  :bind (
-    ("<C-M-up>" . drag-stuff-up)
-    ("<C-M-down>" . drag-stuff-down)
-   ("<C-M-left>" . drag-stuff-left)
-   ("<C-M-right>" . drag-stuff-right))
+  :bind (("<C-M-up>" . drag-stuff-up)
+				 ("<C-M-down>" . drag-stuff-down)
+				 ("<C-M-left>" . drag-stuff-left)
+				 ("<C-M-right>" . drag-stuff-right))
  )
 #+END_SRC
-
 ** multicursor
 #+BEGIN_SRC emacs-lisp
 (use-package multiple-cursors
@@ -242,7 +243,6 @@
   ("C-c C-<" . mc/mark-all-like-this)
 )
 #+END_SRC
-
 ** TODO highlight-symbol
 #+BEGIN_SRC emacs-lisp
 (global-set-key [(control f3)] 'highlight-symbol)
@@ -250,7 +250,6 @@
 (global-set-key [(shift f3)] 'highlight-symbol-prev)
 (global-set-key [(meta f3)] 'highlight-symbol-query-replace)
 #+END_SRC
-
 * org-mode
 ** prerequisite
 #+BEGIN_SRC
@@ -258,9 +257,29 @@
 #+END_SRC
 ** =org=
 #+BEGIN_SRC emacs-lisp
+(custom-set-faces
+ '(org-document-title ((t (:inherit default :weight bold :font "ETBembo" :height 1.4))))
+ '(outline-1 ((t (:font "ETBembo" :foreground "#82aaff" :weight bold :height 1.3))))
+ '(outline-2 ((t (:font "ETBembo" :foreground "#c792ea" :weight bold :height 1.25))))
+ '(outline-3 ((t (:font "ETBembo" :foreground "#bb80b3" :weight bold :height 1.2))))
+ '(outline-4 ((t (:font "ETBembo" :foreground "#a1bfff" :weight bold :height 1.2))))
+ )
+
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+
 (setq org-edit-src-content-indentation 0
       org-src-tab-acts-natively t
       org-src-preserve-indentation t)
+
+(with-eval-after-load 'org
+  (setq org-link-frame-setup '((file . find-file))))
 
 (use-package org
   :mode ("\\.org$" . org-mode)
@@ -369,11 +388,22 @@
 )
 #+END_SRC
 
+** =zotxt=
+#+begin_src emacs-lisp
+;; Activate org-zotxt-mode in org-mode buffers
+(add-hook 'org-mode-hook (lambda () (org-zotxt-mode 1)))
+(use-package zotxt
+	:ensure t
+	:config
+	(setq zotxt-default-bibliography-style "chicago-author-date")
+	(setq zotxt-default-search-method :title-creator-year)
+	)
+#+end_src
 * LaTeX
 ** Set path
 #+BEGIN_SRC emacs-lisp
-(setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
-(setq exec-path (append exec-path '("/Library/TeX/texbin/")))
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2024/bin/universal-darwin"))
+(setq exec-path (append exec-path '("/usr/local/texlive/2024/bin/universal-darwin")))
 ;; Add /Library/TeX/texbin/ to emacs' PATH variable
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin/"))
 (setq exec-path (append exec-path '("/usr/local/bin/")))
@@ -390,118 +420,112 @@
                  (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
 
 (use-package tex
-    :ensure auctex
-    :mode ("\\.tex\\'" . LaTeX-mode)
-    :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
-    :config
-    (setq TeX-auto-save t
-          TeX-parse-self t
-          LaTeX-electric-left-right-brace 1 ;; automatic close tags
-          TeX-source-correlate-method 'synctex
-          TeX-source-correlate-mode t
-          TeX-source-correlate-start-server t)
+  :ensure auctex
+  :mode ("\\.tex\\'" . LaTeX-mode)
+  :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
+  :config
+  (setq TeX-auto-save t
+        TeX-parse-self t
+        LaTeX-electric-left-right-brace 1 ;; automatic close tags
+        TeX-source-correlate-method 'synctex
+        TeX-source-correlate-mode t
+        TeX-source-correlate-start-server t
+				TeX-PDF-mode t)
+  (setq-default TeX-master t)
 
-    (setq-default TeX-master nil)
-    ;; matching dollar sign
-    (add-hook 'LaTeX-mode-hook
-              (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
-              'TeX-source-correlate-mode ;; correlate enabled
-              )
-
-  ;;  open preview using pdf-tools
-  ;;  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-  ;;        TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
-
-(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-(setq reftex-plug-into-AUCTeX t)
- ;; DEPRECATED
- ;; use Skim as external viewer
   (add-hook 'LaTeX-mode-hook
-            (lambda()
-            (add-to-list 'TeX-expand-list
-                           '("%q" skim-make-url))))
-(defun skim-make-url ()
-  (concat
-   (TeX-current-line)
-   " \""
-   (expand-file-name (funcall file (TeX-output-extension) t)
-                    (file-name-directory (TeX-master-file)))
-   "\" \""
-   (buffer-file-name)
-   "\""))
- (setq TeX-view-program-list
-      '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %q")))
- (setq TeX-view-program-selection '((output-pdf "Skim")))
-)
+						;; matching dollar sign
+            (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
+            'TeX-source-correlate-mode ;; correlate enabled
+						'turn-on-reftex
+            )
+
+	(setq reftex-plug-into-AUCTeX t)
+
+	(setq TeX-view-program-list
+      '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %n %o %b")))
+
+	(setq TeX-view-program-selection '((output-pdf "Skim")))
+	)
 #+END_SRC
+
 ** =cdlatex=
 #+BEGIN_SRC emacs-lisp
-  (eval-after-load 'cdlatex ;; disable cdlatex auto paren
-    (lambda ()
-      (substitute-key-definition 'cdlatex-pbb nil cdlatex-mode-map)
-      (substitute-key-definition 'cdlatex-dollar nil cdlatex-mode-map)
-      ))
+(eval-after-load 'cdlatex ;; disable cdlatex auto paren
+  (lambda ()
+    (substitute-key-definition 'cdlatex-pbb nil cdlatex-mode-map)
+    (substitute-key-definition 'cdlatex-dollar nil cdlatex-mode-map)
+		(substitute-key-definition 'cdlatex-sub-superscript nil cdlatex-mode-map)
+    ;; yasnippet kdb takes priority
+    (unless (eq (caar minor-mode-map-alist) 'yas-minor-mode)
+      (let ((mykeys (assq 'yas-minor-mode minor-mode-map-alist)))
+        (assq-delete-all 'yas-minor-mode minor-mode-map-alist)
+        (add-to-list 'minor-mode-map-alist mykeys))))
+)
 
-  (use-package cdlatex
-    :hook (LaTeX-mode . turn-on-cdlatex)
-    :ensure t
-    :init
-    ;; does not really work but putting them here anyways
-    (setq cdlatex-math-modify-prefix 96  ;; "`"
-          cdlatex-math-symbol-prefix 64) ;; "@"
-    (setq cdlatex-math-symbol-alist
-          '((?0 ("\\varnothing" ))
-            (?e ("\\varepsilon"))
-            (?> ("\\geq"))
-            (?< ("\\leq" "\\vartriangleleft"))
-            (123 ("\\subseteq" "\\subset"))
-            (125 ("\\supset" "\\supseteq"))
-            (?~ ("\\simeq" "\\approx"))
-            (?! ("\\neq" "\\neg"))
-            (?c ("\\circ"))
-            (?. ("\\ldots" "\\cdot"))
-            (?[ ("\\Longleftarrow"))
-            (?] ("\\Longrightarrow" "\\Rightarrow"))
-            (?+ ("\\oplus"))
-            (?| ("\\mid"))
-            (?F ("\\Phi"))
-            (?n ("\\nabla"))
-            (?t ("\\tau" "\\to"))
-            (?S ("\\sum" "\\Sigma"))
-            (?* ("\\times" "\\otimes"))
-            (?= ("\\equiv"))
-            (?B ("\\Box"))
-            (?D ("\\Delta" "\\Diamond"))
-            ))
-    (setq cdlatex-math-modify-alist
-          '((?b "\\mathbb" "\\textbf" t nil nil)
-            (?c "\\mathcal" nil t nil nil)
-            (?2 "\\sqrt" nil t nil nil)
-            (?t "\\text" nil t nil nil)
-            (?v "\\vec" nil t nil nil)
-            (?f "\\mathfrak" nil t nil nil)
-            (?m "\\pmod" nil t nil nil)
-            (?- "\\overline" nil t nil nil)
-            (?_ "\\underline" "\\underline" t nil nil)
-            (?~ "\\widetilde" nil t nil nil)
-            (?^ "\\widehat" nil t nil nil)
-            ))
-    (setq cdlatex-command-alist
-        '(("axm" "Insert axiom environment"
-           "" cdlatex-environment ("axiom") t nil)
-          ("prop" "Insert proposition environment"
-             "" cdlatex-environment ("proposition") t nil)
-          ("lcm" "Insert \\text{lcm}"
-           "\\text{lcm}" cdlatex-position-cursor nil nil t)
-          ("gal" "Insert \\text{Gal}()"
-           "\\text{Gal}(?)" cdlatex-position-cursor nil nil t)
-          ("irr" "Insert \\text{irr}_{}()"
-           "\\text{irr}_{?}()" cdlatex-position-cursor nil nil t)
-          ("im" "Insert \\text{im}()"
-           "\\text{im}(?)" cdlatex-position-cursor nil nil t)
+(use-package cdlatex
+  :hook (LaTeX-mode . turn-on-cdlatex)
+  :ensure t
+  :init
+  ;; does not really work but putting them here anyways
+  (setq cdlatex-math-modify-prefix 96  ;; "`"
+        cdlatex-math-symbol-prefix 64) ;; "@"
+  (setq cdlatex-math-symbol-alist
+        '((?0 ("\\varnothing" ))
+          (?e ("\\varepsilon"))
+          (?> ("\\geq"))
+          (?< ("\\leq" "\\vartriangleleft" "\\preccurlyeq"))
+          (123 ("\\subseteq" "\\subset"))
+          (125 ("\\supset" "\\supseteq"))
+          (?~ ("\\simeq" "\\approx"))
+          (?! ("\\neq" "\\neg"))
+          (?c ("\\circ"))
+          (?. ("\\ldots" "\\cdot"))
+          (?[ ("\\Longleftarrow"))
+          (?] ("\\Longrightarrow" "\\Rightarrow"))
+          (?+ ("\\oplus"))
+          (?| ("\\mid"))
+          (?F ("\\Phi"))
+          (?n ("\\nabla"))
+          (?t ("\\tau" "\\to"))
+          (?S ("\\sum" "\\Sigma"))
+          (?* ("\\times" "\\otimes"))
+          (?= ("\\equiv"))
+          (?B ("\\Box"))
+          (?D ("\\Delta" "\\Diamond"))
           ))
-  )
+  (setq cdlatex-math-modify-alist
+        '((?b "\\mathbb" "\\textbf" t nil nil)
+          (?c "\\mathcal" nil t nil nil)
+          (?2 "\\sqrt" nil t nil nil)
+          (?t "\\text" nil t nil nil)
+          (?v "\\vec" nil t nil nil)
+          (?f "\\mathfrak" nil t nil nil)
+          (?m "\\pmod" nil t nil nil)
+          (?- "\\overline" nil t nil nil)
+          (?_ "\\underline" "\\underline" t nil nil)
+          (?~ "\\widetilde" nil t nil nil)
+          (?^ "\\widehat" nil t nil nil)
+          ))
+  (setq cdlatex-command-alist
+      '(("axm" "Insert axiom environment"
+         "" cdlatex-environment ("axiom") t nil)
+        ("prop" "Insert proposition environment"
+           "" cdlatex-environment ("proposition") t nil)
+				("theo" "Insert theorem environment"
+           "" cdlatex-environment ("theorem") t nil)
+        ("lcm" "Insert \\text{lcm}"
+         "\\text{lcm}" cdlatex-position-cursor nil nil t)
+        ("gal" "Insert \\text{Gal}()"
+         "\\text{Gal}(?)" cdlatex-position-cursor nil nil t)
+        ("irr" "Insert \\text{irr}_{}()"
+         "\\text{irr}_{?}()" cdlatex-position-cursor nil nil t)
+        ("im" "Insert \\text{im}()"
+         "\\text{im}(?)" cdlatex-position-cursor nil nil t)
+        ))
+)
 #+END_SRC
+
 * GitHub integration
 ** =Magit=
 #+BEGIN_SRC emacs-lisp
@@ -516,13 +540,7 @@
 (use-package git-gutter
   :hook (prog-mode . git-gutter-mode)
   :config
-  (setq git-gutter:update-interval 0.02))
-
-(use-package git-gutter-fringe
-  :config
-  (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
+  (setq git-gutter:update-interval 0.5))
 #+end_src
 
 * python
@@ -534,8 +552,7 @@
   (setq elpy-rpc-virtualenv-path 'current
         elpy-rpc-python-command "python3")
   (setq python-shell-interpreter "ipython"
-        python-shell-interpreter-args "-i --simple-prompt --profile=default"
-  )
+        python-shell-interpreter-args "-i --simple-prompt --profile=default")
 )
 
 (use-package ein
