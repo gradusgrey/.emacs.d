@@ -6,17 +6,22 @@
 % -*- buffer-read-only: t -*-
 \documentclass[12pt]{article}
 \usepackage{amsmath, amsthm, amssymb, delarray, fancyhdr, todonotes, eufrak,
-hyperref, qtree, stmaryrd}
-% \input{fitch.sty}
+hyperref, qtree, stmaryrd, pxfonts, bm, fitch}
+\linespread{1.25}
 
 \usepackage[margin=1in]{geometry}
 \setlength{\marginparwidth}{2cm}
 \parindent=0pt
 
+% \usepackage[style=authoryear]{biblatex}
+% \addbibresource{somebib.bib}
+
 \newenvironment{solution}
   {\begin{proof}[Solution]} {\end{proof}}
 
-\newtheorem{thm}{Theorem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
 
 \theoremstyle{remark}
 \newtheorem{claim}{Claim}
@@ -36,4 +41,8 @@ hyperref, qtree, stmaryrd}
   \item
 
 \end{enumerate}
+
+% \clearpage
+% \thispagestyle{plain}
+% \printbibliography{}
 \end{document}

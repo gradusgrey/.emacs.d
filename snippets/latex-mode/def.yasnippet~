@@ -1,8 +1,8 @@
 # -*- mode: snippet -*-
-# key : \pr
+# key : def
 # group: environments
-# name : proof
+# name : definition
 # --
-\begin{proof}
+\begin{def}
   $0
-\end{proof}
+\end{def}
