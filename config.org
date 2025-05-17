@@ -7,30 +7,40 @@
 #+BEGIN_SRC emacs-lisp
 (use-package doom-themes
   :demand t
+	:ensure t
   :custom
   (doom-themes-enable-bold t)
   :config
+	(setq doom-themes-padded-modeline t)
   (load-theme 'doom-material t)
-  ;; (load-theme 'doom-one-light t)
+	(doom-themes-org-config)
 )
 
-(custom-theme-set-faces
-   'user
-   '(variable-pitch ((t (:family "ETBembo" :height 1.27))))
-	 '(default ((t (:family "Monospace" :height 175))))
-	 '(fixed-pitch ((t (:family "Monospace" :height 175)))))
-
-(set-face-attribute 'default nil :height 175)
 (setq ring-bell-function 'ignore) ;; disable bell
 (tool-bar-mode -1) ;; disable ugly toolbar
 (scroll-bar-mode -1) ;; disable ugly scroll bar
+
+(use-package mixed-pitch
+	:ensure t
+  :hook
+  (org-mode . mixed-pitch-mode)
+	:config
+	(setq mixed-pitch-set-height t)
+	(add-to-list 'mixed-pitch-fixed-pitch-faces 'font-lock-comment-face)
+	(set-face-attribute 'variable-pitch nil :family "ETBembo" :height 1.27)
+	(set-face-attribute 'default nil :family "Monospace" :height 175)
+	)
 #+END_SRC
 *** More informative modeline and mini-buffer
 #+BEGIN_SRC emacs-lisp
 (display-time-mode 1) ;; displays time
 
+(use-package nerd-icons
+	:ensure t
+  )
+
 (use-package doom-modeline
-  :ensure t
+	:ensure t
   :init (doom-modeline-mode 1)
   :config (setq doom-modeline-height 30
                 doom-modeline-bar-width 3
@@ -49,7 +59,7 @@
 (use-package vertico
   :init
   (vertico-mode)
-	(vertico-indexed-mode)
+  (vertico-indexed-mode)
   (vertico-reverse-mode)
 	:config
 	(setq read-file-name-completion-ignore-case t
@@ -75,30 +85,22 @@
 *** Line/column numbers & Highlighting stuff
 #+BEGIN_SRC emacs-lisp
 (column-number-mode 1) ;; always displays the column number
-(add-hook 'prog-mode-hook 'linum-mode) ;; displays line numbers
-
-(global-set-key [f8] 'neotree-toggle) ;; side bar
-(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+(add-hook 'prog-mode-hook 'display-line-numbers-mode) ;; displays line numbers
 
 (global-hl-line-mode 1) ;; highlight current line
 (show-paren-mode 1) ;; highlight matching parens
 (setq show-paren-delay 0.0) ;; no delay in showing paren
 
-(global-hl-todo-mode 1) ;; highlight TODOs
-(add-hook 'TeX-update-style-hook 'hl-todo-mode)
-(setq hl-todo-highlight-punctuation ":"
-      hl-todo-keyword-faces
-      '(("TODO"       error bold)
-        ("FIXME"      warning bold)
-        ("NOTE"       success bold))
-      hl-todo-include-modes
-      (quote (LaTeX-mode emacs-lisp-mode)))
+(use-package hl-todo
+	:ensure t
+	:config
+	(global-hl-todo-mode 1) ;; highlight TODOs
+	(setq hl-todo-highlight-punctuation ":"
+				hl-todo-keyword-faces
+				'(("TODO"       error bold))))
 #+END_SRC
 ** Hooks and start up
 #+BEGIN_SRC emacs-lisp
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
-
 (setq initial-buffer-choice "~/Org/planning.org") ;; enter with planning.org
 (global-set-key (kbd "M-C-f") 'toggle-frame-fullscreen) ;; full-screen
 (desktop-save-mode 1) ;; recover sessions on startup
@@ -171,6 +173,11 @@
 
 (electric-pair-mode 1) ;; automatically close parens, etc.
 
+(use-package comment-dwim-2
+	:ensure t
+  :bind
+  ("M-;" . comment-dwim-2))
+
 (defun transpose-windows ()
   (interactive)
   (let ((this-buffer (window-buffer (selected-window)))
@@ -184,6 +191,20 @@
 #+END_SRC
 ** Code completion
 #+BEGIN_SRC emacs-lisp
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-cycle t)                 ; Allows cycling through candidates
+  (corfu-auto t)                  ; Enable auto completion
+  (corfu-auto-prefix 3)
+  (corfu-auto-delay 0.2)
+	(corfu-preview-current t)
+	(corfu-quit-at-boundary 'separator)
+  :init
+  (global-corfu-mode)
+  (corfu-history-mode)
+	)
+
 (use-package savehist
   :init
   (savehist-mode)
@@ -203,12 +224,6 @@
 
 (use-package mw-thesaurus
   :bind ("C-c t" . mw-thesaurus-lookup-at-point)
-)
-#+END_SRC
-** Better comments
-#+BEGIN_SRC emacs-lisp
-(use-package comment-dwim-2
-	:bind ("M-;" . comment-dwim-2)
 )
 #+END_SRC
 ** =markdown-mode=
@@ -254,17 +269,9 @@
 ** prerequisite
 #+BEGIN_SRC
 (global-font-lock-mode 1)
-#+END_SRC
+#+end_src
 ** =org=
 #+BEGIN_SRC emacs-lisp
-(custom-set-faces
- '(org-document-title ((t (:inherit default :weight bold :font "ETBembo" :height 1.4))))
- '(outline-1 ((t (:font "ETBembo" :foreground "#82aaff" :weight bold :height 1.3))))
- '(outline-2 ((t (:font "ETBembo" :foreground "#c792ea" :weight bold :height 1.25))))
- '(outline-3 ((t (:font "ETBembo" :foreground "#bb80b3" :weight bold :height 1.2))))
- '(outline-4 ((t (:font "ETBembo" :foreground "#a1bfff" :weight bold :height 1.2))))
- )
-
 (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
@@ -274,15 +281,11 @@
 (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
 (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
 
-(setq org-edit-src-content-indentation 0
-      org-src-tab-acts-natively t
-      org-src-preserve-indentation t)
-
-(with-eval-after-load 'org
-  (setq org-link-frame-setup '((file . find-file))))
-
 (use-package org
-  :mode ("\\.org$" . org-mode)
+	:mode ("\\.org$" . org-mode)
+	:defer
+	:ensure t
+	:hook (org-mode . org-fragtog-mode)
   :init (org-clock-persistence-insinuate)
   :commands (org-clock-persistence-insinuate)
   :bind (("C-c l" . org-store-link)
@@ -292,14 +295,22 @@
          ("C-c C-x C-o" . org-clock-out)
          )
   :config
-  (setq org-agenda-files '("~/Org"))
+	(setq org-format-latex-options (plist-put org-format-latex-options :scale 2))
+	(setq org-edit-src-content-indentation 0
+      org-src-tab-acts-natively t
+      org-src-preserve-indentation t)
+  (setq org-agenda-files '("~/Org/planning.org" "~/Org/Research"))
   (setq org-clock-persist 'history
         org-startup-indented t
+				org-ellipsis "↴"
         org-default-notes-file (concat org-directory "/notes.org")
+				org-agenda-span 1
         org-support-shift-select t
-        org-todo-keywords (quote ((sequence "TODO" "IN PROGRESS" "|" "DONE")))
-        org-todo-keyword-faces (quote (("IN PROGRESS" :foreground "orange" :weight bold)))
+        org-todo-keywords (quote ((sequence "TODO" "IN PROGRESS" "PAUSED" "|" "DONE")))
         org-clock-idle-time 15
+				org-agenda-skip-scheduled-if-done t
+				org-agenda-skip-deadline-if-done t
+				org-agenda-skip-scheduled-repeats-after-deadline t
         agenda-skip-scheduled-if-deadline-is-shown 'repeated-after-deadline
 
         org-agenda-deadline-faces
@@ -311,10 +322,59 @@
         org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM"
         )
   (setq inhibit-compacting-font-caches t)
-  ;; (add-to-list 'org-modules '(org-habit org-crypt))
 )
 #+END_SRC
+** =org-fragtog=
+#+begin_src emacs-lisp
+(use-package org-fragtog
+	:ensure t
+	)
+#+end_src
+** =org-super-agenda=
+#+begin_src emacs-lisp
+(use-package org-super-agenda
+	:ensure t
+	:config
+	(add-hook 'org-mode-hook (lambda () (org-super-agenda-mode 1)))
+	(setq org-super-agenda-groups
+       '((:auto-outline-path t)
+         ))
+	)
+#+end_src
+** =org-modern=
+#+begin_src emacs-lisp
+(with-eval-after-load 'org (global-org-modern-mode))
+(use-package org-modern
+	:ensure t
+	:config
+	(setq org-modern-star nil
+				org-catch-invisible-edits 'show-and-error
+				org-special-ctrl-a/e t
+				org-insert-heading-respect-content t
+				org-pretty-entities t
+				org-agenda-tags-column 0
+				org-modern-block-name 0
+				org-modern-keyword nil
+				org-modern-priority nil)
+	(setq org-modern-todo-faces
+	     (quote (("IN PROGRESS" :foreground "orange" :inverse-video t :weight semibold)
+							 ("PAUSED" :foreground "yellow" :inverse-video t :weight semibold)
+							 )))
+	)
+#+end_src
+** =calfw=
+#+begin_src emacs-lisp
+(use-package calfw
+	:ensure t
+	)
 
+(use-package calfw-org
+	:ensure t
+	:bind ("C-c o c" . cfw:open-org-calendar)
+	:config
+	(setq cfw:org-overwrite-default-keybinding t)
+	)
+#+end_src
 ** =org-capture=
 #+BEGIN_SRC emacs-lisp
 (use-package org-capture
@@ -365,6 +425,11 @@
   (org-journal-date-format "%A, %m/%d/%Y")
   (org-journal-time-format "%H:%M")
 )
+
+(with-eval-after-load 'org-journal
+  (remove-hook 'calendar-today-visible-hook 'org-journal-mark-entries)
+  (remove-hook 'calendar-today-invisible-hook 'org-journal-mark-entries))
+
 #+END_SRC
 
 ** =org-pomodoro=
@@ -388,16 +453,29 @@
 )
 #+END_SRC
 
+** =org-roam=
+#+begin_src emacs-lisp
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-directory (file-truename "~/Org/OrgRoam/"))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture))
+  :config
+  (org-roam-db-autosync-mode))
+#+end_src
 ** =zotxt=
 #+begin_src emacs-lisp
 ;; Activate org-zotxt-mode in org-mode buffers
-(add-hook 'org-mode-hook (lambda () (org-zotxt-mode 1)))
-(use-package zotxt
-	:ensure t
-	:config
-	(setq zotxt-default-bibliography-style "chicago-author-date")
-	(setq zotxt-default-search-method :title-creator-year)
-	)
+;; (add-hook 'org-mode-hook (lambda () (org-zotxt-mode 1)))
+;; (use-package zotxt
+;;	:ensure t
+;;	:config
+;;	(setq zotxt-default-bibliography-style "chicago-author-date")
+;;	(setq zotxt-default-search-method :title-creator-year)
+;;	)
 #+end_src
 * LaTeX
 ** Set path
@@ -434,11 +512,8 @@
   (setq-default TeX-master t)
 
   (add-hook 'LaTeX-mode-hook
-						;; matching dollar sign
-            (lambda () (set (make-local-variable 'TeX-electric-math)(cons "$" "$")))
-            'TeX-source-correlate-mode ;; correlate enabled
-						'turn-on-reftex
-            )
+            'TeX-source-correlate-mode
+		'turn-on-reftex)
 
 	(setq reftex-plug-into-AUCTeX t)
 
@@ -491,11 +566,14 @@
           (?S ("\\sum" "\\Sigma"))
           (?* ("\\times" "\\otimes"))
           (?= ("\\equiv"))
+					(?- ("\\vdash"))
           (?B ("\\Box"))
           (?D ("\\Delta" "\\Diamond"))
+					(?V ("\\bigvee"))
+					(?& ("\\wedge" "\bigwedge"))
           ))
   (setq cdlatex-math-modify-alist
-        '((?b "\\mathbb" "\\textbf" t nil nil)
+        '((?B "\\mathbb" nil t nil nil)
           (?c "\\mathcal" nil t nil nil)
           (?2 "\\sqrt" nil t nil nil)
           (?t "\\text" nil t nil nil)
@@ -506,6 +584,8 @@
           (?_ "\\underline" "\\underline" t nil nil)
           (?~ "\\widetilde" nil t nil nil)
           (?^ "\\widehat" nil t nil nil)
+					(?s "\\mathsf" "\\textsf" t nil nil)
+					(?b "\\bm" "\\textbf" t nil nil)
           ))
   (setq cdlatex-command-alist
       '(("axm" "Insert axiom environment"
@@ -531,31 +611,16 @@
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :config
+  :ensure t
   :bind
   ("C-x g" . magit-status))
 #+END_SRC
 
 ** Git-gutter
 #+begin_src emacs-lisp
-(use-package git-gutter
-  :hook (prog-mode . git-gutter-mode)
-  :config
-  (setq git-gutter:update-interval 0.5))
+;; (use-package git-gutter
+;;   :hook (prog-mode . git-gutter-mode)
+;;   :ensure t
+;;   :config
+;;   (setq git-gutter:update-interval 0.5))
 #+end_src
-
-* python
-#+BEGIN_SRC emacs-lisp
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable)
-  (setq elpy-rpc-virtualenv-path 'current
-        elpy-rpc-python-command "python3")
-  (setq python-shell-interpreter "ipython"
-        python-shell-interpreter-args "-i --simple-prompt --profile=default")
-)
-
-(use-package ein
-  :ensure t
-)
-#+END_SRC
