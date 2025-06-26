@@ -1,9 +1,9 @@
 # -*- buffer-read-only: t -*-
-#+TITLE: My Emacs configuration
+#+TITLE: My Emacs configuration 💻
 
 * General
 ** UI
-*** Theme
+*** Theme and Font
 #+BEGIN_SRC emacs-lisp
 (use-package doom-themes
   :demand t
@@ -16,43 +16,84 @@
 	(doom-themes-org-config)
 )
 
-(setq ring-bell-function 'ignore) ;; disable bell
-(tool-bar-mode -1) ;; disable ugly toolbar
-(scroll-bar-mode -1) ;; disable ugly scroll bar
+(set-fontset-font t 'han "Kaiti SC")
+(set-face-attribute 'default nil :family "Monospace" :height 175)
+(set-face-attribute 'variable-pitch nil :family "ETBembo" :height 1.27)
 
 (use-package mixed-pitch
 	:ensure t
   :hook
   (org-mode . mixed-pitch-mode)
 	:config
+	(global-set-key (kbd "C-x m") 'mixed-pitch-mode)
 	(setq mixed-pitch-set-height t)
 	(add-to-list 'mixed-pitch-fixed-pitch-faces 'font-lock-comment-face)
-	(set-face-attribute 'variable-pitch nil :family "ETBembo" :height 1.27)
-	(set-face-attribute 'default nil :family "Monospace" :height 175)
 	)
 #+END_SRC
-*** More informative modeline and mini-buffer
-#+BEGIN_SRC emacs-lisp
-(display-time-mode 1) ;; displays time
+*** General Cosmetics
+#+begin_src emacs-lisp
+(setq ring-bell-function 'ignore) ;; disable bell
+(tool-bar-mode -1) ;; disable ugly toolbar
+(scroll-bar-mode -1) ;; disable ugly scroll bar
+(set-face-attribute 'region nil :extend t :background "#4d6778")
+
+(set-face-attribute 'font-lock-comment-face nil :foreground "#84959c")
+(set-face-attribute 'font-lock-doc-face nil :foreground "#84959c")
+(set-face-attribute 'org-block-begin-line nil :foreground "#84959c")
 
 (use-package nerd-icons
 	:ensure t
   )
 
+(use-package emojify
+	:ensure t
+  :hook (org-mode special-mode))
+
+(column-number-mode 1) ;; always displays the column number
+(add-hook 'prog-mode-hook 'display-line-numbers-mode) ;; displays line numbers
+
+(global-hl-line-mode 1) ;; highlight current line
+(show-paren-mode 1) ;; highlight matching parens
+(setq show-paren-delay 0.0) ;; no delay in showing paren
+
+(use-package hl-todo
+	:ensure t
+	:config
+	(global-hl-todo-mode 1) ;; highlight TODOs
+	(setq hl-todo-highlight-punctuation ":"
+				hl-todo-keyword-faces
+				'(("TODO"       error bold))))
+#+end_src
+*** Modeline
+#+BEGIN_SRC emacs-lisp
+(display-time-mode 1) ;; displays time
+
 (use-package doom-modeline
 	:ensure t
   :init (doom-modeline-mode 1)
-  :config (setq doom-modeline-height 30
-                doom-modeline-bar-width 3
-                doom-modeline-time-analogue-clock nil)
+  :config
+	(setq doom-modeline-height 30
+				doom-modeline-bar-width 3
+				doom-modeline-time-analogue-clock nil)
+	)
+
+(use-package nyan-mode
+  :init
+  (nyan-mode)
+  :config
+  (setq nyan-wavy-trail t)
 	)
 
 (setq mode-line-right-align-edge 'right-margin)
-
+;; do not load average data
+(setq display-time-default-load-average nil)
+(setq display-time-string-forms
+        '((format-time-string "%m/%d (%a) %H:%M")))
+(display-battery-mode t) ;; displays battery
+#+END_SRC
+*** Mini-buffer
+#+begin_src emacs-lisp
 (use-package marginalia
-  ;; Either bind `marginalia-cycle' globally or only in the minibuffer
-  :bind (:map minibuffer-local-map
-							("M-A" . marginalia-cycle))
   :init
   (marginalia-mode))
 
@@ -69,37 +110,14 @@
 			vertico-cycle t)
 	)
 
-(use-package nyan-mode
-  :init
-  (nyan-mode)
-  :config
-  (setq nyan-wavy-trail t)
-	)
-
-;; do not load average data
-(setq display-time-default-load-average nil)
-(setq display-time-string-forms
-        '((format-time-string "%m/%d (%a) %H:%M")))
-(display-battery-mode t) ;; displays battery
-#+END_SRC
-*** Line/column numbers & Highlighting stuff
-#+BEGIN_SRC emacs-lisp
-(column-number-mode 1) ;; always displays the column number
-(add-hook 'prog-mode-hook 'display-line-numbers-mode) ;; displays line numbers
-
-(global-hl-line-mode 1) ;; highlight current line
-(show-paren-mode 1) ;; highlight matching parens
-(setq show-paren-delay 0.0) ;; no delay in showing paren
-
-(use-package hl-todo
-	:ensure t
-	:config
-	(global-hl-todo-mode 1) ;; highlight TODOs
-	(setq hl-todo-highlight-punctuation ":"
-				hl-todo-keyword-faces
-				'(("TODO"       error bold))))
-#+END_SRC
-** Hooks and start up
+(use-package consult-dir
+  :ensure t
+  :bind (("C-x C-d" . consult-dir)
+         :map vertico-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
+#+end_src
+** Hooks and Other Behavior
 #+BEGIN_SRC emacs-lisp
 (setq initial-buffer-choice "~/Org/planning.org") ;; enter with planning.org
 (global-set-key (kbd "M-C-f") 'toggle-frame-fullscreen) ;; full-screen
@@ -110,25 +128,17 @@
 ;; add LaTeX-mode to prog-mode
 (add-hook 'LaTeX-mode-hook
           (lambda () (run-hooks 'prog-mode-hook)))
+
 ;; add org-mode to prog-mode
 (add-hook 'org-mode-hook
           (lambda () (run-hooks 'prog-mode-hook)))
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
-
-(add-to-list
- 'display-buffer-alist
- '("\\.pdf$*" (display-buffer-reuse-window display-buffer-in-side-window)
-   (window-height . 20)
-   (side . top)))
-
-(add-hook 'org-mode-hook
-          (lambda () (org-indent-mode t)) t)
-
 (global-set-key (kbd "C-`") 'shell)
 (global-set-key (kbd "C-x v") 'variable-pitch-mode)
+
+(global-set-key (kbd "C-x C-b") 'buffer-menu)
 
 (put 'text-scale-adjust 'disabled t)
 
@@ -152,13 +162,28 @@
   :init
   (setq alert-default-style 'notifier))
 #+END_SRC
+** PDF
+#+begin_src emacs-lisp
+(add-to-list
+ 'display-buffer-alist
+ '("\\.pdf$*" (display-buffer-reuse-window display-buffer-in-side-window)
+   (window-width . 0.5)
+   (side . left)))
+
+(use-package pdf-tools
+	:mode  ("\\.pdf\\'" . pdf-view-mode)
+	:ensure t
+	:config
+	(add-hook 'pdf-view-mode-hook (lambda() (display-line-numbers-mode 0)))
+	)
+#+end_src
 * Editing
-** Type with ease
+** Type with Ease
 #+BEGIN_SRC emacs-lisp
 (delete-selection-mode 1) ;; typing replaces selected word
 
-(global-flycheck-mode 1) ;; flycheck
-(add-hook 'text-mode-hook 'flyspell-mode) ;; flyspell
+(global-flycheck-mode 1)
+(add-hook 'text-mode-hook 'flyspell-mode)
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 (when (executable-find "hunspell")
   (setq-default ispell-program-name "hunspell")
@@ -177,34 +202,20 @@
 	:ensure t
   :bind
   ("M-;" . comment-dwim-2))
-
-(defun transpose-windows ()
-  (interactive)
-  (let ((this-buffer (window-buffer (selected-window)))
-        (other-buffer (prog2
-                          (other-window +1)
-                          (window-buffer (selected-window))
-                        (other-window -1))))
-    (switch-to-buffer other-buffer)
-    (switch-to-buffer-other-window this-buffer)
-    (other-window -1)))
 #+END_SRC
 ** Code completion
 #+BEGIN_SRC emacs-lisp
-(use-package corfu
+(use-package company
   :ensure t
-  :custom
-  (corfu-cycle t)                 ; Allows cycling through candidates
-  (corfu-auto t)                  ; Enable auto completion
-  (corfu-auto-prefix 3)
-  (corfu-auto-delay 0.2)
-	(corfu-preview-current t)
-	(corfu-quit-at-boundary 'separator)
   :init
-  (global-corfu-mode)
-  (corfu-history-mode)
-	)
+  (add-hook 'after-init-hook 'global-company-mode)
+  :config
+  (setq company-dabbrev-downcase 0)
+  (setq company-idle-delay 0.25)
+  (setq company-minimum-prefix-length 4)
+  (setq company-tooltip-align-annotations t))
 
+;; saves mini-buffer history
 (use-package savehist
   :init
   (savehist-mode)
@@ -266,12 +277,12 @@
 (global-set-key [(meta f3)] 'highlight-symbol-query-replace)
 #+END_SRC
 * org-mode
-** prerequisite
+** Prerequisite
 #+BEGIN_SRC
 (global-font-lock-mode 1)
 #+end_src
-** =org=
-#+BEGIN_SRC emacs-lisp
+** Cosmetics for Org
+#+begin_src emacs-lisp
 (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
@@ -280,12 +291,22 @@
 (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
 (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
 (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-headline-done nil :foreground "#84959c")
+#+end_src
+** =org=
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'org
+  (define-key org-cdlatex-mode-map (kbd "`") #'org-cdlatex-math-modify)
+	(define-key org-cdlatex-mode-map (kbd "'") nil)
+	(define-key org-cdlatex-mode-map (kbd "@") #'cdlatex-math-symbol)
+	)
 
 (use-package org
 	:mode ("\\.org$" . org-mode)
 	:defer
 	:ensure t
-	:hook (org-mode . org-fragtog-mode)
+	:hook ((org-mode . org-fragtog-mode )
+        (org-mode . org-indent-mode))
   :init (org-clock-persistence-insinuate)
   :commands (org-clock-persistence-insinuate)
   :bind (("C-c l" . org-store-link)
@@ -295,13 +316,16 @@
          ("C-c C-x C-o" . org-clock-out)
          )
   :config
-	(setq org-format-latex-options (plist-put org-format-latex-options :scale 2))
+	(setq org-startup-folded t)
+	(add-hook 'org-mode-hook #'turn-on-org-cdlatex)
 	(setq org-edit-src-content-indentation 0
       org-src-tab-acts-natively t
       org-src-preserve-indentation t)
-  (setq org-agenda-files '("~/Org/planning.org" "~/Org/Research"))
+  (setq org-agenda-files '("~/Org/planning.org" "~/Org/Research" "~/Org/OrgRoam"))
   (setq org-clock-persist 'history
         org-startup-indented t
+				org-startup-with-inline-images t
+				org-log-repeat nil
 				org-ellipsis "↴"
         org-default-notes-file (concat org-directory "/notes.org")
 				org-agenda-span 1
@@ -328,6 +352,12 @@
 #+begin_src emacs-lisp
 (use-package org-fragtog
 	:ensure t
+	:config
+	(setq org-fragtog-preview-delay 0.5)
+	:custom
+	(org-startup-with-latex-preview t)
+	(setq org-format-latex-options
+				(plist-put org-format-latex-options :scale 1.8))
 	)
 #+end_src
 ** =org-super-agenda=
@@ -351,7 +381,6 @@
 				org-catch-invisible-edits 'show-and-error
 				org-special-ctrl-a/e t
 				org-insert-heading-respect-content t
-				org-pretty-entities t
 				org-agenda-tags-column 0
 				org-modern-block-name 0
 				org-modern-keyword nil
@@ -360,6 +389,10 @@
 	     (quote (("IN PROGRESS" :foreground "orange" :inverse-video t :weight semibold)
 							 ("PAUSED" :foreground "yellow" :inverse-video t :weight semibold)
 							 )))
+	(set-face-attribute 'org-modern-progress-complete
+											nil :background "LightGoldenrod1" :foreground "gray10")
+	(set-face-attribute 'org-modern-progress-incomplete
+											nil :background "goldenrod3" :foreground "white")
 	)
 #+end_src
 ** =calfw=
@@ -486,7 +519,6 @@
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin/"))
 (setq exec-path (append exec-path '("/usr/local/bin/")))
 #+END_SRC
-
 ** =AUCTeX=
 #+BEGIN_SRC emacs-lisp
 (eval-after-load 'latex
@@ -509,7 +541,9 @@
         TeX-source-correlate-mode t
         TeX-source-correlate-start-server t
 				TeX-PDF-mode t)
+	(setq emojify-mode -1)
   (setq-default TeX-master t)
+	(setq-default TeX-engine 'luatex)
 
   (add-hook 'LaTeX-mode-hook
             'TeX-source-correlate-mode
@@ -523,7 +557,6 @@
 	(setq TeX-view-program-selection '((output-pdf "Skim")))
 	)
 #+END_SRC
-
 ** =cdlatex=
 #+BEGIN_SRC emacs-lisp
 (eval-after-load 'cdlatex ;; disable cdlatex auto paren
@@ -566,7 +599,7 @@
           (?S ("\\sum" "\\Sigma"))
           (?* ("\\times" "\\otimes"))
           (?= ("\\equiv"))
-					(?- ("\\vdash"))
+					(?- ("\\vdash" "\\models"))
           (?B ("\\Box"))
           (?D ("\\Delta" "\\Diamond"))
 					(?V ("\\bigvee"))
@@ -577,7 +610,7 @@
           (?c "\\mathcal" nil t nil nil)
           (?2 "\\sqrt" nil t nil nil)
           (?t "\\text" nil t nil nil)
-          (?v "\\vec" nil t nil nil)
+          (?v "\\vv" nil t nil nil)
           (?f "\\mathfrak" nil t nil nil)
           (?m "\\pmod" nil t nil nil)
           (?- "\\overline" nil t nil nil)
@@ -592,20 +625,34 @@
          "" cdlatex-environment ("axiom") t nil)
         ("prop" "Insert proposition environment"
            "" cdlatex-environment ("proposition") t nil)
-				("theo" "Insert theorem environment"
+				("thm" "Insert theorem environment"
            "" cdlatex-environment ("theorem") t nil)
-        ("lcm" "Insert \\text{lcm}"
+        ("lcm" "Insert `lcm'"
          "\\text{lcm}" cdlatex-position-cursor nil nil t)
-        ("gal" "Insert \\text{Gal}()"
+        ("gal" "Insert Galois group"
          "\\text{Gal}(?)" cdlatex-position-cursor nil nil t)
-        ("irr" "Insert \\text{irr}_{}()"
+        ("irr" "Insert `irr'"
          "\\text{irr}_{?}()" cdlatex-position-cursor nil nil t)
-        ("im" "Insert \\text{im}()"
+				("gn" "Insert gödel numbering"
+         "\\ulcorner ?\\urcorner" cdlatex-position-cursor nil nil t)
+        ("im" "Insert image"
          "\\text{im}(?)" cdlatex-position-cursor nil nil t)
+				("mfa" "Insert A-quantifier in metalanguage"
+         "\\rotatebox[origin=c]{180}{A}" cdlatex-position-cursor nil nil t)
+				("lpa" "Insert L_PA"
+         "\\mathcal{L}_{\\mathsf{PA}}" cdlatex-position-cursor nil nil t)
         ))
 )
 #+END_SRC
-
+* Lean
+#+begin_src emacs-lisp
+(use-package lean4-mode
+	:mode ("\\.lean$" . lean4-mode)
+  :commands lean4-mode
+  :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
+       :rev :last-release
+       ))
+#+end_src
 * GitHub integration
 ** =Magit=
 #+BEGIN_SRC emacs-lisp
