@@ -15,6 +15,10 @@
 	(doom-themes-org-config)
 )
 
+(use-package nerd-icons
+	:demand t
+  )
+
 (set-fontset-font t 'han "Kaiti SC")
 (set-face-attribute 'default nil :family "Monospace" :height 175)
 (set-face-attribute 'variable-pitch nil :family "ETBembo" :height 1.27)
@@ -28,6 +32,8 @@
 	:config
 	(add-to-list 'mixed-pitch-fixed-pitch-faces 'font-lock-comment-face)
 	)
+
+(global-set-key (kbd "C-x v") 'variable-pitch-mode)
 #+END_SRC
 *** Cosmetics
 #+begin_src emacs-lisp
@@ -40,12 +46,7 @@
 (set-face-attribute 'font-lock-doc-face nil :foreground "#84959c")
 (set-face-attribute 'org-block-begin-line nil :foreground "#84959c")
 
-(use-package nerd-icons
-	:ensure t
-  )
-
 (use-package emojify
-	:ensure t
   :hook (org-mode special-mode))
 
 (column-number-mode 1) ;; always displays the column number
@@ -54,33 +55,23 @@
 (global-hl-line-mode 1) ;; highlight current line
 (show-paren-mode 1) ;; highlight matching parens
 (setq show-paren-delay 0.0) ;; no delay in showing paren
-
-(use-package hl-todo
-	:ensure t
-	:config
-	(global-hl-todo-mode 1) ;; highlight TODOs
-	(setq hl-todo-highlight-punctuation ":"
-				hl-todo-keyword-faces
-				'(("TODO"       error bold))))
 #+end_src
 *** Modeline
 #+BEGIN_SRC emacs-lisp
 (display-time-mode 1) ;; displays time
 
 (use-package doom-modeline
-	:ensure t
+	:demand t
   :init (doom-modeline-mode 1)
-  :config
-	(setq doom-modeline-height 30
-				doom-modeline-bar-width 3
-				doom-modeline-time-analogue-clock nil)
+  :custom
+	(doom-modeline-height 30)
+	(doom-modeline-bar-width 3)
+  (doom-modeline-time-analogue-clock nil)
 	)
 
 (use-package nyan-mode
-  :init
-  (nyan-mode)
-  :config
-  (setq nyan-wavy-trail t)
+  :init (nyan-mode)
+  :custom (nyan-wavy-trail t)
 	)
 
 (setq mode-line-right-align-edge 'right-margin)
@@ -101,13 +92,21 @@
   (vertico-mode)
   (vertico-indexed-mode)
   (vertico-reverse-mode)
-	:config
-	(setq read-file-name-completion-ignore-case t
-      read-buffer-completion-ignore-case t
-      completion-ignore-case t
-			vertico-resize t
-			vertico-cycle t)
+	:custom
+	(vertico-resize t)
+	(vertico-cycle t)
+	(read-file-name-completion-ignore-case t)
+  (read-buffer-completion-ignore-case t)
+  (completion-ignore-case t)
 	)
+
+(use-package vertico-directory
+  :after vertico
+	:ensure nil
+  :bind (:map vertico-map
+							("M-b" . vertico-directory-up))
+  ;; Tidy shadowed file names
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
 (use-package consult-dir
   :ensure t
@@ -125,28 +124,18 @@
 (fset 'yes-or-no-p 'y-or-n-p) ;; y/n instead of yes/no
 (setq custom-unlispify-tag-names nil)
 
-;; add LaTeX-mode to prog-mode
-(add-hook 'LaTeX-mode-hook
-          (lambda () (run-hooks 'prog-mode-hook)))
-
-;; add org-mode to prog-mode
-(add-hook 'org-mode-hook
-          (lambda () (run-hooks 'prog-mode-hook)))
-
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (use-package vterm
-    :ensure t
-		:config
-		(global-set-key (kbd "C-`") 'vterm)
-		(setq vterm-shell "/usr/local/bin/fish")
-		(add-hook 'vterm-mode-hook
-          (lambda ()
+	:bind ("C-`" . vterm)
+	:custom
+	(vterm-shell "/usr/local/bin/fish")
+	:config
+	(add-hook 'vterm-mode-hook
+						(lambda ()
                (set (make-local-variable 'buffer-face-mode-face) '(:family "MonaspiceAr Nerd Font"))
-               (buffer-face-mode t))
-		))
-
-(global-set-key (kbd "C-x v") 'variable-pitch-mode)
+               (buffer-face-mode t)))
+	)
 
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
 
@@ -315,6 +304,11 @@
 ;; 	(define-key org-cdlatex-mode-map (kbd "'") nil)
 ;; 	(define-key org-cdlatex-mode-map (kbd "@") #'cdlatex-math-symbol)
 ;; 	)
+
+
+;; add org-mode to prog-mode
+(add-hook 'org-mode-hook
+          (lambda () (run-hooks 'prog-mode-hook)))
 
 (use-package org
   :init (org-clock-persistence-insinuate)
@@ -534,6 +528,10 @@
          LaTeX-clean-output-suffixes
          (append LaTeX-clean-output-suffixes
                  (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
+
+;; add LaTeX-mode to prog-mode
+(add-hook 'LaTeX-mode-hook
+          (lambda () (run-hooks 'prog-mode-hook)))
 
 (use-package tex
   :ensure auctex

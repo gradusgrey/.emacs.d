@@ -29,11 +29,12 @@
 	 '(## auctex calfw calfw-org cdlatex comment-dwim-2 consult-dir define-word
 				doom-modeline doom-themes drag-stuff emacsql emojify flycheck git-gutter
 				git-gutter-fringe gnu-elpa-keyring-update gptel helm-org-rifle
-				highlight-symbol hl-todo image-roll lean4-mode lsp-mode magit marginalia
+				highlight-symbol image-roll lean4-mode lsp-mode magit marginalia
 				markdown-mode mixed-pitch multiple-cursors mw-thesaurus neotree nyan-mode org
 				org-alert org-bullets org-capture org-capture-pop-frame org-fragtog
 				org-fragtop org-journal org-mode org-pomodoro org-rifle org-roam
-				org-super-agenda pandoc-mode pdf-tools tide use-package vterm yasnippet zotxt))
+				org-super-agenda pandoc-mode pdf-tools tide use-package vertico-directory
+				vterm yasnippet zotxt))
  '(safe-local-variable-values '((TeX-command-extra-options . "-shell-escape")))
  '(tetris-x-colors
 	 [[229 192 123] [97 175 239] [209 154 102] [224 108 117] [152 195 121] [198 120 221]
@@ -41,3 +42,9 @@
 
 (org-babel-load-file (concat user-emacs-directory "config.org"))
 ;;; .emacs ends here
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
