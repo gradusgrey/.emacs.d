@@ -7,11 +7,10 @@
 #+BEGIN_SRC emacs-lisp
 (use-package doom-themes
   :demand t
-	:ensure t
   :custom
   (doom-themes-enable-bold t)
+	(doom-themes-padded-modeline t)
   :config
-	(setq doom-themes-padded-modeline t)
   (load-theme 'doom-material t)
 	(doom-themes-org-config)
 )
@@ -21,16 +20,16 @@
 (set-face-attribute 'variable-pitch nil :family "ETBembo" :height 1.27)
 
 (use-package mixed-pitch
-	:ensure t
   :hook
   (org-mode . mixed-pitch-mode)
+	:bind ("C-x m" . mixed-pitch-mode)
+	:custom
+	(mixed-pitch-set-height t)
 	:config
-	(global-set-key (kbd "C-x m") 'mixed-pitch-mode)
-	(setq mixed-pitch-set-height t)
 	(add-to-list 'mixed-pitch-fixed-pitch-faces 'font-lock-comment-face)
 	)
 #+END_SRC
-*** General Cosmetics
+*** Cosmetics
 #+begin_src emacs-lisp
 (setq ring-bell-function 'ignore) ;; disable bell
 (tool-bar-mode -1) ;; disable ugly toolbar
@@ -124,6 +123,7 @@
 (desktop-save-mode 1) ;; recover sessions on startup
 (global-auto-revert-mode t) ;; auto revert
 (fset 'yes-or-no-p 'y-or-n-p) ;; y/n instead of yes/no
+(setq custom-unlispify-tag-names nil)
 
 ;; add LaTeX-mode to prog-mode
 (add-hook 'LaTeX-mode-hook
@@ -135,7 +135,17 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-(global-set-key (kbd "C-`") 'shell)
+(use-package vterm
+    :ensure t
+		:config
+		(global-set-key (kbd "C-`") 'vterm)
+		(setq vterm-shell "/usr/local/bin/fish")
+		(add-hook 'vterm-mode-hook
+          (lambda ()
+               (set (make-local-variable 'buffer-face-mode-face) '(:family "MonaspiceAr Nerd Font"))
+               (buffer-face-mode t))
+		))
+
 (global-set-key (kbd "C-x v") 'variable-pitch-mode)
 
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
@@ -155,6 +165,11 @@
 (global-set-key [(control wheel-up)] 'nil)
 (global-set-key [(control wheel-down)] 'nil)
 #+END_SRC
+** Set path
+#+BEGIN_SRC emacs-lisp
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin/"))
+(setq exec-path (append exec-path '("/usr/local/bin/")))
+#+END_SRC
 ** =alert=
 #+BEGIN_SRC emacs-lisp
 (use-package alert
@@ -162,21 +177,6 @@
   :init
   (setq alert-default-style 'notifier))
 #+END_SRC
-** PDF
-#+begin_src emacs-lisp
-(add-to-list
- 'display-buffer-alist
- '("\\.pdf$*" (display-buffer-reuse-window display-buffer-in-side-window)
-   (window-width . 0.5)
-   (side . left)))
-
-(use-package pdf-tools
-	:mode  ("\\.pdf\\'" . pdf-view-mode)
-	:ensure t
-	:config
-	(add-hook 'pdf-view-mode-hook (lambda() (display-line-numbers-mode 0)))
-	)
-#+end_src
 * Editing
 ** Type with Ease
 #+BEGIN_SRC emacs-lisp
@@ -213,7 +213,9 @@
   (setq company-dabbrev-downcase 0)
   (setq company-idle-delay 0.25)
   (setq company-minimum-prefix-length 4)
-  (setq company-tooltip-align-annotations t))
+  (setq company-tooltip-align-annotations t)
+	(setq emojify-company-tooltips-p t)
+	)
 
 ;; saves mini-buffer history
 (use-package savehist
@@ -276,6 +278,19 @@
 (global-set-key [(shift f3)] 'highlight-symbol-prev)
 (global-set-key [(meta f3)] 'highlight-symbol-query-replace)
 #+END_SRC
+* PDF
+#+begin_src emacs-lisp
+(add-to-list
+ 'display-buffer-alist
+ '("\\.pdf$*" (display-buffer-reuse-window display-buffer-in-side-window)
+   (window-width . 0.5)
+   (side . left)))
+
+(use-package pdf-tools
+	:mode  ("\\.pdf\\'" . pdf-view-mode)
+	:ensure t
+	)
+#+end_src
 * org-mode
 ** Prerequisite
 #+BEGIN_SRC
@@ -295,19 +310,18 @@
 #+end_src
 ** =org=
 #+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'org
-  (define-key org-cdlatex-mode-map (kbd "`") #'org-cdlatex-math-modify)
-	(define-key org-cdlatex-mode-map (kbd "'") nil)
-	(define-key org-cdlatex-mode-map (kbd "@") #'cdlatex-math-symbol)
-	)
+;; (with-eval-after-load 'org
+;;   (define-key org-cdlatex-mode-map (kbd "`") #'org-cdlatex-math-modify)
+;; 	(define-key org-cdlatex-mode-map (kbd "'") nil)
+;; 	(define-key org-cdlatex-mode-map (kbd "@") #'cdlatex-math-symbol)
+;; 	)
 
 (use-package org
-	:mode ("\\.org$" . org-mode)
+  :init (org-clock-persistence-insinuate)
 	:defer
 	:ensure t
 	:hook ((org-mode . org-fragtog-mode )
         (org-mode . org-indent-mode))
-  :init (org-clock-persistence-insinuate)
   :commands (org-clock-persistence-insinuate)
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
@@ -346,6 +360,30 @@
         org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM"
         )
   (setq inhibit-compacting-font-caches t)
+
+	(setq org-refile-use-outline-path "file")
+
+	(defun org-journal-find-location ()
+    (org-journal-new-entry t)
+    (goto-char (point-max))
+    (re-search-backward "^\\*")
+    )
+
+  (setq org-capture-templates
+      '(("t" "TODO Entry" entry (file "~/Org/Planning.org")
+         "* TODO %^{Description}\n")
+        ("j" "Journal Entry" entry
+           (function org-journal-find-location)
+           "* %(format-time-string org-journal-time-format) %^{Title}\n%?")
+        ("r" "Weekly Review" entry
+           (function org-journal-find-location)
+           "* Weekly Review %(format-time-string org-journal-time-format)\n%i%?" :created t)
+        ("k" "Quote" entry (file "~/Org/Babel/quotes.org")
+         "* %^{Author}, /%^{Work}/\n%U\n%i#+BEGIN_QUOTE\n%?\n#+END_QUOTE\n")
+        ("b" "Book" entry (file "~/Org/Babel/books.org")
+         "* TODO %^{Work}\n+ %^{Author}\n+ %u\n")
+        )
+      )
 )
 #+END_SRC
 ** =org-fragtog=
@@ -408,36 +446,6 @@
 	(setq cfw:org-overwrite-default-keybinding t)
 	)
 #+end_src
-** =org-capture=
-#+BEGIN_SRC emacs-lisp
-(use-package org-capture
-  :config
-  ;; append to the last headline by default
-  ;; does not support multiple entries within the same day
-  (defun org-journal-find-location ()
-    (org-journal-new-entry t)
-    (goto-char (point-max))
-    (re-search-backward "^\\*")
-    )
-
-  (setq org-capture-templates
-      '(("t" "TODO Entry" entry (file "~/Org/Planning.org")
-         "* TODO %^{Description}\n")
-        ("j" "Journal Entry" entry
-           (function org-journal-find-location)
-           "* %(format-time-string org-journal-time-format) %^{Title}\n%?")
-        ("r" "Weekly Review" entry
-           (function org-journal-find-location)
-           "* Weekly Review %(format-time-string org-journal-time-format)\n%i%?" :created t)
-        ("k" "Quote" entry (file "~/Org/Babel/quotes.org")
-         "* %^{Author}, /%^{Work}/\n%U\n%i#+BEGIN_QUOTE\n%?\n#+END_QUOTE\n")
-        ("b" "Book" entry (file "~/Org/Babel/books.org")
-         "* TODO %^{Work}\n+ %^{Author}\n+ %u\n")
-        )
-      )
-)
-#+END_SRC
-
 ** =org-bullets=
 #+BEGIN_SRC emacs-lisp
 (use-package org-bullets
@@ -499,26 +507,24 @@
   :config
   (org-roam-db-autosync-mode))
 #+end_src
+** =org-rifle=
+#+begin_src emacs-lisp
+(use-package helm-org-rifle
+	:ensure t
+	)
+#+end_src
 ** =zotxt=
 #+begin_src emacs-lisp
 ;; Activate org-zotxt-mode in org-mode buffers
-;; (add-hook 'org-mode-hook (lambda () (org-zotxt-mode 1)))
-;; (use-package zotxt
-;;	:ensure t
-;;	:config
-;;	(setq zotxt-default-bibliography-style "chicago-author-date")
-;;	(setq zotxt-default-search-method :title-creator-year)
-;;	)
+(add-hook 'org-mode-hook (lambda () (org-zotxt-mode 1)))
+(use-package zotxt
+	:ensure t
+	:config
+	(setq zotxt-default-bibliography-style "chicago-author-date")
+	(setq zotxt-default-search-method :title-creator-year)
+	)
 #+end_src
 * LaTeX
-** Set path
-#+BEGIN_SRC emacs-lisp
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2024/bin/universal-darwin"))
-(setq exec-path (append exec-path '("/usr/local/texlive/2024/bin/universal-darwin")))
-;; Add /Library/TeX/texbin/ to emacs' PATH variable
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin/"))
-(setq exec-path (append exec-path '("/usr/local/bin/")))
-#+END_SRC
 ** =AUCTeX=
 #+BEGIN_SRC emacs-lisp
 (eval-after-load 'latex
@@ -640,7 +646,7 @@
 				("mfa" "Insert A-quantifier in metalanguage"
          "\\rotatebox[origin=c]{180}{A}" cdlatex-position-cursor nil nil t)
 				("lpa" "Insert L_PA"
-         "\\mathcal{L}_{\\mathsf{PA}}" cdlatex-position-cursor nil nil t)
+         "\\mathcal{L}_{\\textsf{PA}}" cdlatex-position-cursor nil nil t)
         ))
 )
 #+END_SRC
@@ -652,6 +658,11 @@
   :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
        :rev :last-release
        ))
+#+end_src
+* LLM
+#+begin_src emacs-lisp
+(use-package gptel
+	)
 #+end_src
 * GitHub integration
 ** =Magit=
@@ -665,9 +676,17 @@
 
 ** Git-gutter
 #+begin_src emacs-lisp
-;; (use-package git-gutter
-;;   :hook (prog-mode . git-gutter-mode)
-;;   :ensure t
-;;   :config
-;;   (setq git-gutter:update-interval 0.5))
+(use-package git-gutter
+	:load-path "elpa/git-gutter"
+	:ensure t
+  :hook (prog-mode . git-gutter-mode)
+  :config
+  (setq git-gutter:update-interval 0.5))
+
+(use-package git-gutter-fringe
+	:ensure t
+  :config
+  (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 #+end_src
