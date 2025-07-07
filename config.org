@@ -178,49 +178,43 @@
   (setq-default ispell-program-name "hunspell")
   (setq ispell-really-hunspell t))
 
-(setq-default auto-fill-function 'do-auto-fill) ;; auto-fill-mode enabled universally
+(setq-default auto-fill-function 'do-auto-fill)
 (setq-default fill-column 85)
 
 (setq-default cursor-type 'box)
 (blink-cursor-mode 0)
 (setq-default tab-width 2)
 
-(electric-pair-mode 1) ;; automatically close parens, etc.
+(electric-pair-mode 1)
 
 (use-package comment-dwim-2
-	:ensure t
   :bind
   ("M-;" . comment-dwim-2))
 #+END_SRC
 ** Code completion
 #+BEGIN_SRC emacs-lisp
 (use-package company
-  :ensure t
   :init
   (add-hook 'after-init-hook 'global-company-mode)
-  :config
-  (setq company-dabbrev-downcase 0)
-  (setq company-idle-delay 0.25)
-  (setq company-minimum-prefix-length 4)
-  (setq company-tooltip-align-annotations t)
-	(setq emojify-company-tooltips-p t)
+  :custom
+  (company-dabbrev-downcase 0)
+	(company-idle-delay 0.25)
+	(company-minimum-prefix-length 4)
+	(company-tooltip-align-annotations t)
+	(emojify-company-tooltips-p t)
 	)
 
 ;; saves mini-buffer history
 (use-package savehist
-  :init
-  (savehist-mode)
-)
+  :init (savehist-mode)
+	)
 
 (use-package yasnippet
-  :ensure t
-  :init
-  (yas-global-mode 1)
-)
+  :init (yas-global-mode 1)
+	)
 #+END_SRC
-** TODO Quick dictionary
+** Quick dictionary
 #+BEGIN_SRC emacs-lisp
-;; quick dictionary and thesaurus
 (use-package define-word
   :bind ("C-c d" . define-word-at-point))
 
@@ -231,7 +225,6 @@
 ** =markdown-mode=
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
-  :ensure t
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
@@ -242,12 +235,9 @@
 ** =drag-stuff=
 #+BEGIN_SRC emacs-lisp
 (use-package drag-stuff
-  :ensure t
-  :config (drag-stuff-global-mode 1)
+  :init (drag-stuff-global-mode 1)
   :bind (("<C-M-up>" . drag-stuff-up)
-				 ("<C-M-down>" . drag-stuff-down)
-				 ("<C-M-left>" . drag-stuff-left)
-				 ("<C-M-right>" . drag-stuff-right))
+				 ("<C-M-down>" . drag-stuff-down))
  )
 #+END_SRC
 ** multicursor
@@ -260,13 +250,6 @@
   ("C-c C-<" . mc/mark-all-like-this)
 )
 #+END_SRC
-** TODO highlight-symbol
-#+BEGIN_SRC emacs-lisp
-(global-set-key [(control f3)] 'highlight-symbol)
-(global-set-key [f3] 'highlight-symbol-next)
-(global-set-key [(shift f3)] 'highlight-symbol-prev)
-(global-set-key [(meta f3)] 'highlight-symbol-query-replace)
-#+END_SRC
 * PDF
 #+begin_src emacs-lisp
 (add-to-list
@@ -276,8 +259,8 @@
    (side . left)))
 
 (use-package pdf-tools
+	:defer t
 	:mode  ("\\.pdf\\'" . pdf-view-mode)
-	:ensure t
 	)
 #+end_src
 * org-mode
@@ -299,63 +282,49 @@
 #+end_src
 ** =org=
 #+BEGIN_SRC emacs-lisp
-;; (with-eval-after-load 'org
-;;   (define-key org-cdlatex-mode-map (kbd "`") #'org-cdlatex-math-modify)
-;; 	(define-key org-cdlatex-mode-map (kbd "'") nil)
-;; 	(define-key org-cdlatex-mode-map (kbd "@") #'cdlatex-math-symbol)
-;; 	)
-
-
 ;; add org-mode to prog-mode
 (add-hook 'org-mode-hook
           (lambda () (run-hooks 'prog-mode-hook)))
 
 (use-package org
   :init (org-clock-persistence-insinuate)
-	:defer
-	:ensure t
-	:hook ((org-mode . org-fragtog-mode )
-        (org-mode . org-indent-mode))
-  :commands (org-clock-persistence-insinuate)
+	:hook ((org-mode . org-indent-mode)
+				 (org-mode . turn-on-org-cdlatex))
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          ("C-c c" . org-capture)
          ("C-c b" . org-switchb)
          ("C-c C-x C-o" . org-clock-out)
          )
+	:custom
+	(org-startup-folded t)
+	(org-edit-src-content-indentation 0)
+  (org-src-tab-acts-natively t)
+  (org-src-preserve-indentation t)
+	(org-clock-persist 'history)
+	(org-startup-indented t)
+	(org-startup-with-inline-images t)
+	(org-log-repeat nil)
+	(org-ellipsis "↴")
+  (org-default-notes-file (concat org-directory "/notes.org"))
+	(org-agenda-span 1)
+  (org-support-shift-select t)
+  (org-todo-keywords (quote ((sequence "TODO" "IN PROGRESS" "PAUSED" "|" "DONE"))))
+  (org-clock-idle-time 15)
+	(org-agenda-skip-scheduled-if-done t)
+	(org-agenda-skip-deadline-if-done t)
+	(org-agenda-skip-scheduled-repeats-after-deadline t)
+  (agenda-skip-scheduled-if-deadline-is-shown 'repeated-after-deadline)
+  (inhibit-compacting-font-caches t)
+	(org-refile-use-outline-path "file")
+  (org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM")
   :config
-	(setq org-startup-folded t)
-	(add-hook 'org-mode-hook #'turn-on-org-cdlatex)
-	(setq org-edit-src-content-indentation 0
-      org-src-tab-acts-natively t
-      org-src-preserve-indentation t)
   (setq org-agenda-files '("~/Org/planning.org" "~/Org/Research" "~/Org/OrgRoam"))
-  (setq org-clock-persist 'history
-        org-startup-indented t
-				org-startup-with-inline-images t
-				org-log-repeat nil
-				org-ellipsis "↴"
-        org-default-notes-file (concat org-directory "/notes.org")
-				org-agenda-span 1
-        org-support-shift-select t
-        org-todo-keywords (quote ((sequence "TODO" "IN PROGRESS" "PAUSED" "|" "DONE")))
-        org-clock-idle-time 15
-				org-agenda-skip-scheduled-if-done t
-				org-agenda-skip-deadline-if-done t
-				org-agenda-skip-scheduled-repeats-after-deadline t
-        agenda-skip-scheduled-if-deadline-is-shown 'repeated-after-deadline
-
-        org-agenda-deadline-faces
+  (setq org-agenda-deadline-faces
         '((1.001 . error)
           (1.0 . org-warning)
           (0.5 . org-upcoming-deadline)
-          (0.0 . org-upcoming-distant-deadline))
-
-        org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM"
-        )
-  (setq inhibit-compacting-font-caches t)
-
-	(setq org-refile-use-outline-path "file")
+          (0.0 . org-upcoming-distant-deadline)))
 
 	(defun org-journal-find-location ()
     (org-journal-new-entry t)
@@ -379,15 +348,24 @@
         )
       )
 )
+
+(use-package org-cdlatex
+	:ensure nil
+	:after org
+	:bind
+	  (:map org-cdlatex-mode-map
+        ("`" . org-cdlatex-math-modify)
+        ("'" . nil)
+        ("@" . cdlatex-math-symbol)))
 #+END_SRC
 ** =org-fragtog=
 #+begin_src emacs-lisp
 (use-package org-fragtog
-	:ensure t
-	:config
-	(setq org-fragtog-preview-delay 0.5)
+	:after org
 	:custom
+	(org-fragtog-preview-delay 0.5)
 	(org-startup-with-latex-preview t)
+	:config
 	(setq org-format-latex-options
 				(plist-put org-format-latex-options :scale 1.8))
 	)
@@ -395,9 +373,8 @@
 ** =org-super-agenda=
 #+begin_src emacs-lisp
 (use-package org-super-agenda
-	:ensure t
+	:hook (org-mode . org-super-agenda-mode)
 	:config
-	(add-hook 'org-mode-hook (lambda () (org-super-agenda-mode 1)))
 	(setq org-super-agenda-groups
        '((:auto-outline-path t)
          ))
@@ -405,18 +382,18 @@
 #+end_src
 ** =org-modern=
 #+begin_src emacs-lisp
-(with-eval-after-load 'org (global-org-modern-mode))
 (use-package org-modern
-	:ensure t
+	:hook (org-mode . global-org-modern-mode)
+	:custom
+	(org-modern-star nil)
+  (org-catch-invisible-edits 'show-and-error)
+  (org-special-ctrl-a/e t)
+  (org-insert-heading-respect-content t)
+  (org-agenda-tags-column 0)
+  (org-modern-block-name 0)
+  (org-modern-keyword nil)
+  (org-modern-priority nil)
 	:config
-	(setq org-modern-star nil
-				org-catch-invisible-edits 'show-and-error
-				org-special-ctrl-a/e t
-				org-insert-heading-respect-content t
-				org-agenda-tags-column 0
-				org-modern-block-name 0
-				org-modern-keyword nil
-				org-modern-priority nil)
 	(setq org-modern-todo-faces
 	     (quote (("IN PROGRESS" :foreground "orange" :inverse-video t :weight semibold)
 							 ("PAUSED" :foreground "yellow" :inverse-video t :weight semibold)
@@ -430,29 +407,26 @@
 ** =calfw=
 #+begin_src emacs-lisp
 (use-package calfw
-	:ensure t
+	:defer t
 	)
 
 (use-package calfw-org
-	:ensure t
 	:bind ("C-c o c" . cfw:open-org-calendar)
-	:config
-	(setq cfw:org-overwrite-default-keybinding t)
+	:custom
+	(cfw:org-overwrite-default-keybinding t)
 	)
 #+end_src
 ** =org-bullets=
 #+BEGIN_SRC emacs-lisp
 (use-package org-bullets
-	:ensure t
-	:config
-	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+	:hook (org-mode . org-bullets-mode)
+	)
 #+END_SRC
 
 ** =org-journal=
 #+BEGIN_SRC emacs-lisp
 (use-package org-journal
-  :ensure t
-  :init
+	:defer t
   :custom
   (org-journal-file-type 'yearly)
   (org-journal-file-format "%Y.org")
@@ -470,52 +444,48 @@
 ** =org-pomodoro=
 #+BEGIN_SRC emacs-lisp
 (use-package org-pomodoro
-  :ensure t
   :after org
   :bind (("C-c p" . org-pomodoro))
-  :config
-  (setq org-pomodoro-ticking-sound-p nil
-        org-clock-mode-line-total 'today
-        org-pomodoro-manual-break t
-        org-pomodoro-length 50
-        org-pomodoro-short-break-length 5
-        org-pomodoro-long-break-length 10
-        org-pomodoro-long-break-frequency 2
-        org-pomodoro-finished-sound "~/.emacs.d/audio/goes-without-saying.mp3"
-        org-pomodoro-overtime-sound "~/.emacs.d/audio/goes-without-saying.mp3"
-        org-pomodoro-short-break-sound "~/.emacs.d/audio/deduction.mp3"
-        org-pomodoro-long-break-sound "~/.emacs.d/audio/solemn.mp3")
+  :custom
+  (org-pomodoro-ticking-sound-p nil)
+  (org-clock-mode-line-total 'today)
+  (org-pomodoro-manual-break t)
+  (org-pomodoro-length 50)
+  (org-pomodoro-short-break-length 5)
+  (org-pomodoro-long-break-length 10)
+  (org-pomodoro-long-break-frequency 2)
+  (org-pomodoro-finished-sound "~/.emacs.d/audio/goes-without-saying.mp3")
+  (org-pomodoro-overtime-sound "~/.emacs.d/audio/goes-without-saying.mp3")
+  (org-pomodoro-short-break-sound "~/.emacs.d/audio/deduction.mp3")
+  (org-pomodoro-long-break-sound "~/.emacs.d/audio/solemn.mp3")
 )
 #+END_SRC
 
 ** =org-roam=
 #+begin_src emacs-lisp
 (use-package org-roam
-  :ensure t
-  :custom
-  (org-roam-directory (file-truename "~/Org/OrgRoam/"))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert)
          ("C-c n c" . org-roam-capture))
+  :custom
+  (org-roam-directory (file-truename "~/Org/OrgRoam/"))
   :config
   (org-roam-db-autosync-mode))
 #+end_src
-** =org-rifle=
+** TODO =org-rifle=
 #+begin_src emacs-lisp
 (use-package helm-org-rifle
-	:ensure t
+	:after org
 	)
 #+end_src
 ** =zotxt=
 #+begin_src emacs-lisp
-;; Activate org-zotxt-mode in org-mode buffers
-(add-hook 'org-mode-hook (lambda () (org-zotxt-mode 1)))
 (use-package zotxt
-	:ensure t
-	:config
-	(setq zotxt-default-bibliography-style "chicago-author-date")
-	(setq zotxt-default-search-method :title-creator-year)
+	:hook (org-mode . org-zotxt-mode)
+	:custom
+	(zotxt-default-bibliography-style "chicago-author-date")
+	(zotxt-default-search-method :title-creator-year)
 	)
 #+end_src
 * LaTeX
@@ -657,7 +627,7 @@
        :rev :last-release
        ))
 #+end_src
-* LLM
+* TODO LLM
 #+begin_src emacs-lisp
 (use-package gptel
 	)
@@ -666,25 +636,24 @@
 ** =Magit=
 #+BEGIN_SRC emacs-lisp
 (use-package magit
-  :config
-  :ensure t
   :bind
-  ("C-x g" . magit-status))
+  ("C-x g" . magit-status)
+	)
 #+END_SRC
-
 ** Git-gutter
 #+begin_src emacs-lisp
 (use-package git-gutter
-	:load-path "elpa/git-gutter"
-	:ensure t
   :hook (prog-mode . git-gutter-mode)
-  :config
-  (setq git-gutter:update-interval 0.5))
+  :custom
+  (git-gutter:update-interval 0.5)
+)
 
 (use-package git-gutter-fringe
-	:ensure t
+	:ensure nil
+	:defer t
   :config
   (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
+  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom)
+	)
 #+end_src

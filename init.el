@@ -24,7 +24,6 @@
 	 '("0ad7f1c71fd0289f7549f0454c9b12005eddf9b76b7ead32a24d9cb1d16cbcbd"
 		 "1ed5c8b7478d505a358f578c00b58b430dde379b856fbcb60ed8d345fc95594e" default))
  '(doc-view-continuous t)
- '(org-clock-persist 'history)
  '(package-selected-packages
 	 '(## auctex calfw calfw-org cdlatex comment-dwim-2 consult-dir define-word
 				doom-modeline doom-themes drag-stuff emacsql emojify flycheck git-gutter
