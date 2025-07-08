@@ -263,7 +263,7 @@
 	:mode  ("\\.pdf\\'" . pdf-view-mode)
 	)
 #+end_src
-* org-mode
+* org
 ** Prerequisite
 #+BEGIN_SRC
 (global-font-lock-mode 1)
@@ -385,7 +385,7 @@
 (use-package org-modern
 	:hook (org-mode . global-org-modern-mode)
 	:custom
-	(org-modern-star nil)
+	(org-modern-star 'fold)
   (org-catch-invisible-edits 'show-and-error)
   (org-special-ctrl-a/e t)
   (org-insert-heading-respect-content t)
@@ -393,15 +393,17 @@
   (org-modern-block-name 0)
   (org-modern-keyword nil)
   (org-modern-priority nil)
+	(org-modern-fold-stars
+	 '(("►" . "▼") ("▷" . "▽") ("⯈" . "⯆") ("▹" . "▿") ("▸" . "▾")))
 	:config
 	(setq org-modern-todo-faces
 	     (quote (("IN PROGRESS" :foreground "orange" :inverse-video t :weight semibold)
 							 ("PAUSED" :foreground "yellow" :inverse-video t :weight semibold)
 							 )))
 	(set-face-attribute 'org-modern-progress-complete
-											nil :background "LightGoldenrod1" :foreground "gray10")
+											nil :background "#c3e88d" :foreground "gray10")
 	(set-face-attribute 'org-modern-progress-incomplete
-											nil :background "goldenrod3" :foreground "white")
+											nil :background "#bbbeb7" :foreground "gray10")
 	)
 #+end_src
 ** =calfw=
