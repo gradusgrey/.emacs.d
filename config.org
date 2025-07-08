@@ -491,15 +491,6 @@
 * LaTeX
 ** =AUCTeX=
 #+BEGIN_SRC emacs-lisp
-(eval-after-load 'latex
-  '(setq LaTeX-clean-intermediate-suffixes
-         (append LaTeX-clean-intermediate-suffixes
-                 (list "\\.fdb_latexmk" "\\.tex~" "\\.log" "\\.tdo"))
-         LaTeX-clean-output-suffixes
-         (append LaTeX-clean-output-suffixes
-                 (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt"))))
-
-;; add LaTeX-mode to prog-mode
 (add-hook 'LaTeX-mode-hook
           (lambda () (run-hooks 'prog-mode-hook)))
 
@@ -507,21 +498,26 @@
   :ensure auctex
   :mode ("\\.tex\\'" . LaTeX-mode)
   :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
+	:hook ((LaTeX-mode . TeX-source-correlate-mode)
+				 (LaTeX-mode . turn-on-reftex))
+	:custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (LaTeX-electric-left-right-brace 1)
+  (TeX-source-correlate-method 'synctex)
+  (TeX-source-correlate-mode t)
+  (TeX-source-correlate-start-server t)
+  (TeX-PDF-mode t)
   :config
-  (setq TeX-auto-save t
-        TeX-parse-self t
-        LaTeX-electric-left-right-brace 1 ;; automatic close tags
-        TeX-source-correlate-method 'synctex
-        TeX-source-correlate-mode t
-        TeX-source-correlate-start-server t
-				TeX-PDF-mode t)
 	(setq emojify-mode -1)
-  (setq-default TeX-master t)
 	(setq-default TeX-engine 'luatex)
-
-  (add-hook 'LaTeX-mode-hook
-            'TeX-source-correlate-mode
-		'turn-on-reftex)
+  (setq-default TeX-master t)
+  (setq LaTeX-clean-intermediate-suffixes
+         (append LaTeX-clean-intermediate-suffixes
+                 (list "\\.fdb_latexmk" "\\.tex~" "\\.log" "\\.tdo"))
+         LaTeX-clean-output-suffixes
+         (append LaTeX-clean-output-suffixes
+                 (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt")))
 
 	(setq reftex-plug-into-AUCTeX t)
 
@@ -529,7 +525,7 @@
       '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %n %o %b")))
 
 	(setq TeX-view-program-selection '((output-pdf "Skim")))
-	)
+)
 #+END_SRC
 ** =cdlatex=
 #+BEGIN_SRC emacs-lisp
@@ -547,11 +543,10 @@
 
 (use-package cdlatex
   :hook (LaTeX-mode . turn-on-cdlatex)
-  :ensure t
   :init
-  ;; does not really work but putting them here anyways
   (setq cdlatex-math-modify-prefix 96  ;; "`"
         cdlatex-math-symbol-prefix 64) ;; "@"
+	:config
   (setq cdlatex-math-symbol-alist
         '((?0 ("\\varnothing" ))
           (?e ("\\varepsilon"))
@@ -650,7 +645,7 @@
 
 (use-package git-gutter-fringe
 	:ensure nil
-	:defer t
+	:after git-gutter
   :config
   (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
