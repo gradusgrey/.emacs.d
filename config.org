@@ -190,13 +190,23 @@
 ** Type with Ease
 #+BEGIN_SRC emacs-lisp
 (delete-selection-mode 1) ;; typing replaces selected word
-
 (global-flycheck-mode 1)
-(add-hook 'text-mode-hook 'flyspell-mode)
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
-(when (executable-find "hunspell")
-  (setq-default ispell-program-name "hunspell")
-  (setq ispell-really-hunspell t))
+
+
+(use-package flyspell
+  :ensure nil
+  :custom
+  (ispell-program-name "hunspell")
+	(ispell-really-hunspell t)
+  :hook
+  (prog-mode . flyspell-prog-mode)
+	(text-mode . flyspell-mode)
+  :config
+  (dolist (my-list '((org-property-drawer-re)
+                     ("=" "=") ("~" "~")
+                     ("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
+    (add-to-list 'ispell-skip-region-alist my-list))
+)
 
 (setq-default auto-fill-function 'do-auto-fill)
 (setq-default fill-column 85)
