@@ -17,7 +17,14 @@
 
 (use-package nerd-icons
 	:demand t
-  )
+)
+
+(use-package nerd-icons-completion
+  :demand t
+  :hook
+  (marginalia-mode . nerd-icons-completion-marginalia-setup)
+  (after-init . nerd-icons-completion-mode)
+)
 
 (set-fontset-font t 'han "Kaiti SC")
 (set-face-attribute 'default nil :family "Monospace" :height 175)
@@ -46,6 +53,9 @@
 (set-face-attribute 'font-lock-doc-face nil :foreground "#84959c")
 (set-face-attribute 'org-block-begin-line nil :foreground "#84959c")
 
+(setq-default cursor-type 'box)
+(blink-cursor-mode 0)
+
 (use-package emojify
   :hook (org-mode special-mode))
 
@@ -55,6 +65,12 @@
 (global-hl-line-mode 1) ;; highlight current line
 (show-paren-mode 1) ;; highlight matching parens
 (setq show-paren-delay 0.0) ;; no delay in showing paren
+
+(use-package rainbow-delimiters
+  :demand t
+  :custom (rainbow-delimiters-max-face-count 4)
+  :hook (prog-mode . rainbow-delimiters-mode)
+)
 #+end_src
 *** Modeline
 #+BEGIN_SRC emacs-lisp
@@ -153,6 +169,10 @@
 
 (global-set-key [(control wheel-up)] 'nil)
 (global-set-key [(control wheel-down)] 'nil)
+
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
 #+END_SRC
 ** Set path
 #+BEGIN_SRC emacs-lisp
@@ -180,9 +200,6 @@
 
 (setq-default auto-fill-function 'do-auto-fill)
 (setq-default fill-column 85)
-
-(setq-default cursor-type 'box)
-(blink-cursor-mode 0)
 (setq-default tab-width 2)
 
 (electric-pair-mode 1)
@@ -191,7 +208,7 @@
   :bind
   ("M-;" . comment-dwim-2))
 #+END_SRC
-** Code completion
+** Completion
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :init
@@ -202,7 +219,7 @@
 	(company-minimum-prefix-length 4)
 	(company-tooltip-align-annotations t)
 	(emojify-company-tooltips-p t)
-	)
+)
 
 ;; saves mini-buffer history
 (use-package savehist
@@ -211,7 +228,19 @@
 
 (use-package yasnippet
   :init (yas-global-mode 1)
-	)
+)
+
+(use-package which-key
+  :ensure nil
+  :diminish
+  :custom
+  (which-key-mode t)
+  (which-key-add-column-padding 2)
+  (which-key-allow-multiple-replacements t)
+  (which-key-idle-delay 0.8)
+  (which-key-min-display-lines 6)
+  (which-key-side-window-slot -10)
+)
 #+END_SRC
 ** Quick dictionary
 #+BEGIN_SRC emacs-lisp
@@ -394,7 +423,7 @@
   (org-modern-keyword nil)
   (org-modern-priority nil)
 	(org-modern-fold-stars
-	 '(("►" . "▼") ("▷" . "▽") ("⯈" . "⯆") ("▹" . "▿") ("▸" . "▾")))
+	 '(("⇛" . "⇓") ("⏵" . "▽") ("⯈" . "⯆") ("▸" . "▿") ("▸" . "▿")))
 	:config
 	(setq org-modern-todo-faces
 	     (quote (("IN PROGRESS" :foreground "orange" :inverse-video t :weight semibold)
