@@ -32,11 +32,11 @@
 				git-gutter-fringe gnu-elpa-keyring-update gptel helm-org-rifle
 				highlight-symbol image-roll lean4-mode lsp-mode magit marginalia
 				markdown-mode mixed-pitch multiple-cursors mw-thesaurus neotree
-				nerd-icons-completion nyan-mode org org-alert org-bullets org-capture
-				org-capture-pop-frame org-fragtog org-fragtop org-journal org-mode
-				org-pomodoro org-rifle org-roam org-super-agenda pandoc-mode pdf-tools
-				rainbow-delimiters tide treesit-auto use-package vertico-directory vterm
-				yasnippet zotxt))
+				nerd-icons-completion nyan-mode orderless org org-alert org-bullets
+				org-capture org-capture-pop-frame org-fragtog org-fragtop org-journal
+				org-mode org-pomodoro org-rifle org-roam org-super-agenda pandoc-mode
+				pdf-tools rainbow-delimiters tide treesit-auto use-package vertico-directory
+				vterm yasnippet zotxt))
  '(safe-local-variable-values '((TeX-command-extra-options . "-shell-escape")))
  '(tetris-x-colors
 	 [[229 192 123] [97 175 239] [209 154 102] [224 108 117] [152 195 121] [198 120 221]
@@ -49,4 +49,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "white")))))
