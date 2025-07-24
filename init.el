@@ -36,7 +36,7 @@
 				org-capture org-capture-pop-frame org-fragtog org-fragtop org-journal
 				org-mode org-pomodoro org-rifle org-roam org-super-agenda pandoc-mode
 				pdf-tools rainbow-delimiters tide treesit-auto use-package vertico-directory
-				vterm yasnippet zotxt))
+				vterm writeroom-mode yasnippet zotxt))
  '(safe-local-variable-values '((TeX-command-extra-options . "-shell-escape")))
  '(tetris-x-colors
 	 [[229 192 123] [97 175 239] [209 154 102] [224 108 117] [152 195 121] [198 120 221]
@@ -44,9 +44,3 @@
 
 (org-babel-load-file (concat user-emacs-directory "config.org"))
 ;;; .emacs ends here
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(rainbow-delimiters-depth-1-face ((t (:foreground "white")))))

@@ -2,6 +2,11 @@
 #+TITLE: My Emacs configuration 💻
 
 * General
+** Set path
+#+BEGIN_SRC emacs-lisp
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin/"))
+(setq exec-path (append exec-path '("/usr/local/bin/")))
+#+END_SRC
 ** UI
 *** Theme and Font
 #+BEGIN_SRC emacs-lisp
@@ -27,8 +32,8 @@
 )
 
 (set-fontset-font t 'han "Kaiti SC")
-(set-face-attribute 'default nil :family "Monospace" :height 175)
-(set-face-attribute 'variable-pitch nil :family "ETBembo" :height 1.27)
+(set-face-attribute 'default nil :family "Monospace" :height 180)
+(set-face-attribute 'variable-pitch nil :family "ETBembo" :height 1.28)
 
 (use-package mixed-pitch
   :hook
@@ -38,9 +43,7 @@
 	(mixed-pitch-set-height t)
 	:config
 	(add-to-list 'mixed-pitch-fixed-pitch-faces 'font-lock-comment-face)
-	)
-
-(global-set-key (kbd "C-x v") 'variable-pitch-mode)
+)
 #+END_SRC
 *** Cosmetics
 #+begin_src emacs-lisp
@@ -51,7 +54,7 @@
 
 (set-face-attribute 'font-lock-comment-face nil :foreground "#84959c")
 (set-face-attribute 'font-lock-doc-face nil :foreground "#84959c")
-(set-face-attribute 'org-block-begin-line nil :foreground "#84959c")
+(set-face-attribute 'shadow nil :foreground "#84959c")
 
 (setq-default cursor-type 'box)
 (blink-cursor-mode 0)
@@ -65,6 +68,7 @@
 (global-hl-line-mode 1) ;; highlight current line
 (show-paren-mode 1) ;; highlight matching parens
 (setq show-paren-delay 0.0) ;; no delay in showing paren
+(global-display-fill-column-indicator-mode 1)
 
 (use-package rainbow-delimiters
   :demand t
@@ -77,27 +81,27 @@
 *** Modeline
 #+BEGIN_SRC emacs-lisp
 (display-time-mode 1) ;; displays time
+(display-battery-mode t) ;; displays battery
 
 (use-package doom-modeline
 	:demand t
   :init (doom-modeline-mode 1)
   :custom
-	(doom-modeline-height 30)
+	(doom-modeline-height 25)
 	(doom-modeline-bar-width 3)
   (doom-modeline-time-analogue-clock nil)
-	)
+)
 
 (use-package nyan-mode
   :init (nyan-mode)
   :custom (nyan-wavy-trail t)
-	)
+)
 
-(setq mode-line-right-align-edge 'right-margin)
-;; do not load average data
+(setq mode-line-right-align-edge 'right-fringe)
+
 (setq display-time-default-load-average nil)
 (setq display-time-string-forms
         '((format-time-string "%m/%d (%a) %H:%M")))
-(display-battery-mode t) ;; displays battery
 #+END_SRC
 *** Mini-buffer
 #+begin_src emacs-lisp
@@ -161,16 +165,14 @@
 						(lambda ()
                (set (make-local-variable 'buffer-face-mode-face) '(:family "MonaspiceAr Nerd Font"))
                (buffer-face-mode t)))
-	)
+)
 
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
-
-(put 'text-scale-adjust 'disabled t)
 
 (setq confirm-kill-emacs 'y-or-n-p)
 
 (defun close-and-kill-this-pane ()
-	"If there are multiple windows, then close this pane and kill the buffer in it also."
+	"If there are multiple windows, then close this pane and kill the buffer in it."
 	(interactive)
 	(kill-this-buffer)
   (if (not (one-window-p))
@@ -182,12 +184,8 @@
 
 (use-package treesit-auto
   :config
-  (global-treesit-auto-mode))
-#+END_SRC
-** Set path
-#+BEGIN_SRC emacs-lisp
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin/"))
-(setq exec-path (append exec-path '("/usr/local/bin/")))
+  (global-treesit-auto-mode)
+)
 #+END_SRC
 ** =alert=
 #+BEGIN_SRC emacs-lisp
@@ -196,6 +194,15 @@
   :init
   (setq alert-default-style 'notifier))
 #+END_SRC
+** =writeroom=
+#+begin_src emacs-lisp
+(use-package writeroom-mode
+	:bind ("C-x r" . writeroom-mode)
+	:hook (org-mode . writeroom-mode)
+	:custom
+	(writeroom-mode-line t)
+)
+#+end_src
 * Editing
 ** Type with Ease
 #+BEGIN_SRC emacs-lisp
@@ -244,10 +251,10 @@
 ;; saves mini-buffer history
 (use-package savehist
   :init (savehist-mode)
-	)
+)
 
 (use-package yasnippet
-  :init (yas-global-mode 1)
+	:hook (prog-mode . yas-minor-mode)
 )
 
 (use-package which-key
@@ -319,7 +326,7 @@
 #+end_src
 ** Cosmetics for Org
 #+begin_src emacs-lisp
-(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-block nil :foreground 'unspecified :inherit 'fixed-pitch)
 (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
@@ -331,7 +338,6 @@
 #+end_src
 ** =org=
 #+BEGIN_SRC emacs-lisp
-;; add org-mode to prog-mode
 (add-hook 'org-mode-hook
           (lambda () (run-hooks 'prog-mode-hook)))
 
@@ -354,7 +360,6 @@
 	(org-startup-indented t)
 	(org-startup-with-inline-images t)
 	(org-log-repeat nil)
-	(org-ellipsis "↴")
   (org-default-notes-file (concat org-directory "/notes.org"))
 	(org-agenda-span 1)
   (org-support-shift-select t)
@@ -367,7 +372,12 @@
   (inhibit-compacting-font-caches t)
 	(org-refile-use-outline-path "file")
   (org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM")
+	(org-refile-targets '((org-agenda-files :maxlevel . 3)))
+	(org-outline-path-complete-in-steps nil)
+  (org-agenda-files '("~/Org/planning.org" "~/Org/Research" "~/Org/OrgRoam"))
   :config
+	(set-face-attribute 'org-block-begin-line nil :foreground "#84959c")
+
   (setq org-agenda-files '("~/Org/planning.org" "~/Org/Research" "~/Org/OrgRoam"))
   (setq org-agenda-deadline-faces
         '((1.001 . error)
@@ -380,6 +390,9 @@
     (goto-char (point-max))
     (re-search-backward "^\\*")
     )
+
+	(setq org-format-latex-options
+				(plist-put org-format-latex-options :scale 1.8))
 
   (setq org-capture-templates
       '(("t" "TODO Entry" entry (file "~/Org/Planning.org")
@@ -413,11 +426,7 @@
 	:after org
 	:custom
 	(org-fragtog-preview-delay 0.5)
-	(org-startup-with-latex-preview t)
-	:config
-	(setq org-format-latex-options
-				(plist-put org-format-latex-options :scale 1.8))
-	)
+)
 #+end_src
 ** =org-super-agenda=
 #+begin_src emacs-lisp
@@ -425,9 +434,10 @@
 	:hook (org-mode . org-super-agenda-mode)
 	:config
 	(setq org-super-agenda-groups
-       '((:auto-outline-path t)
-         ))
+				'((:auto-outline-path t)
+					)
 	)
+)
 #+end_src
 ** =org-modern=
 #+begin_src emacs-lisp
@@ -528,7 +538,7 @@
 #+begin_src emacs-lisp
 (use-package helm-org-rifle
 	:after org
-	)
+)
 #+end_src
 ** =zotxt=
 #+begin_src emacs-lisp
@@ -548,6 +558,7 @@
 (use-package tex
   :ensure auctex
   :mode ("\\.tex\\'" . LaTeX-mode)
+	:commands TeX-command-run-all
   :bind ("s-[" . TeX-command-run-all) ;; C-c C-a
 	:hook ((LaTeX-mode . TeX-source-correlate-mode)
 				 (LaTeX-mode . turn-on-reftex))
@@ -563,12 +574,6 @@
 	(setq emojify-mode -1)
 	(setq-default TeX-engine 'luatex)
   (setq-default TeX-master t)
-  (setq LaTeX-clean-intermediate-suffixes
-         (append LaTeX-clean-intermediate-suffixes
-                 (list "\\.fdb_latexmk" "\\.tex~" "\\.log" "\\.tdo"))
-         LaTeX-clean-output-suffixes
-         (append LaTeX-clean-output-suffixes
-                 (list "\\.dvi" "\\.ps" "\\.xdv" "\\.log" "\\.prv" "\\.fmt")))
 
 	(setq reftex-plug-into-AUCTeX t)
 
