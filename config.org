@@ -60,7 +60,8 @@
 (blink-cursor-mode 0)
 
 (use-package emojify
-  :hook (org-mode special-mode))
+  :hook (org-mode special-mode)
+)
 
 (column-number-mode 1) ;; always displays the column number
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ;; displays line numbers
@@ -163,7 +164,8 @@
 	:config
 	(add-hook 'vterm-mode-hook
 						(lambda ()
-               (set (make-local-variable 'buffer-face-mode-face) '(:family "MonaspiceAr Nerd Font"))
+               (set (make-local-variable 'buffer-face-mode-face)
+										'(:family "MonaspiceAr Nerd Font"))
                (buffer-face-mode t)))
 )
 
@@ -176,7 +178,8 @@
 	(interactive)
 	(kill-this-buffer)
   (if (not (one-window-p))
-			(delete-window)))
+			(delete-window))
+)
 (global-set-key (kbd "s-w") 'close-and-kill-this-pane)
 
 (global-set-key [(control wheel-up)] 'nil)
@@ -192,7 +195,8 @@
 (use-package alert
   :commands (alert)
   :init
-  (setq alert-default-style 'notifier))
+  (setq alert-default-style 'notifier)
+)
 #+END_SRC
 ** =writeroom=
 #+begin_src emacs-lisp
@@ -201,6 +205,7 @@
 	:hook (org-mode . writeroom-mode)
 	:custom
 	(writeroom-mode-line t)
+	(writeroom-width 90)
 )
 #+end_src
 * Editing
@@ -208,7 +213,6 @@
 #+BEGIN_SRC emacs-lisp
 (delete-selection-mode 1) ;; typing replaces selected word
 (global-flycheck-mode 1)
-
 
 (use-package flyspell
   :ensure nil
@@ -233,7 +237,8 @@
 
 (use-package comment-dwim-2
   :bind
-  ("M-;" . comment-dwim-2))
+  ("M-;" . comment-dwim-2)
+)
 #+END_SRC
 ** Completion
 #+BEGIN_SRC emacs-lisp
@@ -272,7 +277,8 @@
 ** Quick dictionary
 #+BEGIN_SRC emacs-lisp
 (use-package define-word
-  :bind ("C-c d" . define-word-at-point))
+  :bind ("C-c d" . define-word-at-point)
+)
 
 (use-package mw-thesaurus
   :bind ("C-c t" . mw-thesaurus-lookup-at-point)
@@ -294,7 +300,7 @@
   :init (drag-stuff-global-mode 1)
   :bind (("<C-M-up>" . drag-stuff-up)
 				 ("<C-M-down>" . drag-stuff-down))
- )
+)
 #+END_SRC
 ** multicursor
 #+BEGIN_SRC emacs-lisp
@@ -317,7 +323,7 @@
 (use-package pdf-tools
 	:defer t
 	:mode  ("\\.pdf\\'" . pdf-view-mode)
-	)
+)
 #+end_src
 * org
 ** Prerequisite
@@ -352,15 +358,20 @@
          ("C-c C-x C-o" . org-clock-out)
          )
 	:custom
-	(org-startup-folded t)
-	(org-edit-src-content-indentation 0)
-  (org-src-tab-acts-natively t)
-  (org-src-preserve-indentation t)
-	(org-clock-persist 'history)
 	(org-startup-indented t)
 	(org-startup-with-inline-images t)
-	(org-log-repeat nil)
+	(org-startup-folded t)
   (org-default-notes-file (concat org-directory "/notes.org"))
+
+	(org-ellipsis "﻿")
+
+	(org-edit-src-content-indentation 0)
+  (org-src-tab-acts-natively t)
+	(org-src-fontify-natively t)
+  (org-src-preserve-indentation t)
+
+	(org-clock-persist 'history)
+	(org-log-repeat nil)
 	(org-agenda-span 1)
   (org-support-shift-select t)
   (org-todo-keywords (quote ((sequence "TODO" "IN PROGRESS" "PAUSED" "|" "DONE"))))
@@ -418,7 +429,8 @@
 	  (:map org-cdlatex-mode-map
         ("`" . org-cdlatex-math-modify)
         ("'" . nil)
-        ("@" . cdlatex-math-symbol)))
+        ("@" . cdlatex-math-symbol))
+)
 #+END_SRC
 ** =org-fragtog=
 #+begin_src emacs-lisp
@@ -463,27 +475,26 @@
 											nil :background "#c3e88d" :foreground "gray10")
 	(set-face-attribute 'org-modern-progress-incomplete
 											nil :background "#bbbeb7" :foreground "gray10")
-	)
+)
 #+end_src
 ** =calfw=
 #+begin_src emacs-lisp
 (use-package calfw
 	:defer t
-	)
+)
 
 (use-package calfw-org
 	:bind ("C-c o c" . cfw:open-org-calendar)
 	:custom
 	(cfw:org-overwrite-default-keybinding t)
-	)
+)
 #+end_src
 ** =org-bullets=
 #+BEGIN_SRC emacs-lisp
 (use-package org-bullets
 	:hook (org-mode . org-bullets-mode)
-	)
+)
 #+END_SRC
-
 ** =org-journal=
 #+BEGIN_SRC emacs-lisp
 (use-package org-journal
@@ -499,9 +510,7 @@
 (with-eval-after-load 'org-journal
   (remove-hook 'calendar-today-visible-hook 'org-journal-mark-entries)
   (remove-hook 'calendar-today-invisible-hook 'org-journal-mark-entries))
-
 #+END_SRC
-
 ** =org-pomodoro=
 #+BEGIN_SRC emacs-lisp
 (use-package org-pomodoro
@@ -521,7 +530,6 @@
   (org-pomodoro-long-break-sound "~/.emacs.d/audio/solemn.mp3")
 )
 #+END_SRC
-
 ** =org-roam=
 #+begin_src emacs-lisp
 (use-package org-roam
@@ -532,7 +540,8 @@
   :custom
   (org-roam-directory (file-truename "~/Org/OrgRoam/"))
   :config
-  (org-roam-db-autosync-mode))
+  (org-roam-db-autosync-mode)
+)
 #+end_src
 ** TODO =org-rifle=
 #+begin_src emacs-lisp
@@ -547,7 +556,7 @@
 	:custom
 	(zotxt-default-bibliography-style "chicago-author-date")
 	(zotxt-default-search-method :title-creator-year)
-	)
+)
 #+end_src
 * LaTeX
 ** =AUCTeX=
@@ -570,12 +579,11 @@
   (TeX-source-correlate-mode t)
   (TeX-source-correlate-start-server t)
   (TeX-PDF-mode t)
+	(reftex-plug-into-AUCTeX t)
   :config
 	(setq emojify-mode -1)
 	(setq-default TeX-engine 'luatex)
   (setq-default TeX-master t)
-
-	(setq reftex-plug-into-AUCTeX t)
 
 	(setq TeX-view-program-list
       '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %n %o %b")))
@@ -606,16 +614,16 @@
   (setq cdlatex-math-symbol-alist
         '((?0 ("\\varnothing" ))
           (?e ("\\varepsilon"))
-          (?> ("\\geq"))
-          (?< ("\\leq" "\\vartriangleleft" "\\preccurlyeq"))
-          (123 ("\\subseteq" "\\subset"))
-          (125 ("\\supset" "\\supseteq"))
+          (62 ("\\geq")) ;; "<"
+          (60 ("\\leq" "\\vartriangleleft" "\\preccurlyeq")) ;; ">"
+          (123 ("\\subseteq" "\\subset")) ;; "{"
+          (125 ("\\supset" "\\supseteq")) ;; "}"
           (?~ ("\\simeq" "\\approx"))
           (?! ("\\neq" "\\neg"))
           (?c ("\\circ"))
           (?. ("\\ldots" "\\cdot"))
-          (?[ ("\\Longleftarrow"))
-          (?] ("\\Longrightarrow" "\\Rightarrow"))
+          (91 ("\\Longleftarrow")) ;; "["
+          (93 ("\\Longrightarrow" "\\Rightarrow")) ;; "]"
           (?+ ("\\oplus"))
           (?| ("\\mid"))
           (?F ("\\Phi"))
@@ -676,12 +684,14 @@
   :commands lean4-mode
   :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
        :rev :last-release
-       ))
+       )
+)
 #+end_src
 * TODO LLM
 #+begin_src emacs-lisp
 (use-package gptel
-	)
+	:defer t
+)
 #+end_src
 * GitHub integration
 ** =Magit=
@@ -689,7 +699,7 @@
 (use-package magit
   :bind
   ("C-x g" . magit-status)
-	)
+)
 #+END_SRC
 ** Git-gutter
 #+begin_src emacs-lisp
@@ -706,5 +716,5 @@
   (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom)
-	)
+)
 #+end_src
