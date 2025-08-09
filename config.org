@@ -10,14 +10,53 @@
 ** UI
 *** Theme and Font
 #+BEGIN_SRC emacs-lisp
+;; from https://github.com/alphapapa/unpackaged.el#customize-theme-faces
+(defun my/customize-theme-faces (theme &rest faces)
+  "Customize THEME with FACES.
+   Advises `enable-theme' with a function that customizes FACES when THEME is enabled.
+   If THEME is already enabled, also applies faces immediately.
+   Calls `custom-theme-set-faces'."
+  (declare (indent defun))
+  (when (member theme custom-enabled-themes)
+    ;; Theme already enabled: apply faces now.
+    (let ((custom--inhibit-theme-enable nil))
+      (apply #'custom-theme-set-faces theme faces)))
+  (let ((fn-name (intern (concat "unpackaged/enable-theme-advice-for-" (symbol-name theme)))))
+    ;; Apply advice for next time theme is enabled.
+    (fset fn-name
+          (lambda (enabled-theme)
+            (when (eq enabled-theme theme)
+              (let ((custom--inhibit-theme-enable nil))
+                (apply #'custom-theme-set-faces theme faces)))))
+    (advice-remove #'enable-theme fn-name)
+    (advice-add #'enable-theme :after fn-name))
+)
+
 (use-package doom-themes
   :demand t
   :custom
   (doom-themes-enable-bold t)
 	(doom-themes-padded-modeline t)
   :config
-  (load-theme 'doom-material t)
-	(doom-themes-org-config)
+  (load-theme 'doom-nord-light t t)
+  (load-theme 'doom-material t t)
+	(enable-theme 'doom-nord-light)
+
+	(my/customize-theme-faces 'doom-nord-light
+		'(org-block ((t (:background "#d4deee"))))
+	)
+
+	(my/customize-theme-faces 'doom-material
+		'(org-modern-progress-complete
+			((t (:background "#c3e88d" :foreground "gray10"))))
+    '(org-modern-progress-incomplete
+			((t (:background "#bbbeb7" :foreground "gray10"))))
+		'(region ((t (:extend t :background "#4d6778"))))
+		'(font-lock-comment-face ((t (:foreground "#84959c"))))
+		'(font-lock-doc-face ((t (:foreground "#84959c"))))
+		'(shadow ((t (:foreground "#84959c"))))
+		'(org-headline-done ((t (:foreground "#84959c"))))
+	)
 )
 
 (use-package nerd-icons
@@ -50,11 +89,6 @@
 (setq ring-bell-function 'ignore) ;; disable bell
 (tool-bar-mode -1) ;; disable ugly toolbar
 (scroll-bar-mode -1) ;; disable ugly scroll bar
-(set-face-attribute 'region nil :extend t :background "#4d6778")
-
-(set-face-attribute 'font-lock-comment-face nil :foreground "#84959c")
-(set-face-attribute 'font-lock-doc-face nil :foreground "#84959c")
-(set-face-attribute 'shadow nil :foreground "#84959c")
 
 (setq-default cursor-type 'box)
 (blink-cursor-mode 0)
@@ -67,17 +101,8 @@
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ;; displays line numbers
 
 (global-hl-line-mode 1) ;; highlight current line
-(show-paren-mode 1) ;; highlight matching parens
-(setq show-paren-delay 0.0) ;; no delay in showing paren
-(global-display-fill-column-indicator-mode 1)
 
-(use-package rainbow-delimiters
-  :demand t
-  :hook (prog-mode . rainbow-delimiters-mode)
-  :custom (rainbow-delimiters-max-face-count 4)
-	:config
-	(set-face-attribute 'rainbow-delimiters-depth-1-face nil :foreground "white")
-)
+(global-display-fill-column-indicator-mode 1)
 #+end_src
 *** Modeline
 #+BEGIN_SRC emacs-lisp
@@ -201,7 +226,7 @@
 ** =writeroom=
 #+begin_src emacs-lisp
 (use-package writeroom-mode
-	:bind ("C-x r" . writeroom-mode)
+	:bind ("C-c r" . writeroom-mode)
 	:hook (org-mode . writeroom-mode)
 	:custom
 	(writeroom-mode-line t)
@@ -234,6 +259,7 @@
 (setq-default tab-width 2)
 
 (electric-pair-mode 1)
+(setq electric-pair-preserve-balance nil)
 
 (use-package comment-dwim-2
   :bind
@@ -312,6 +338,12 @@
   ("C-c C-<" . mc/mark-all-like-this)
 )
 #+END_SRC
+** rainbow mode
+#+begin_src emacs-lisp
+(use-package rainbow-mode
+	:defer t
+)
+#+end_src
 * PDF
 #+begin_src emacs-lisp
 (add-to-list
@@ -340,7 +372,6 @@
 (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
 (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
 (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-headline-done nil :foreground "#84959c")
 #+end_src
 ** =org=
 #+BEGIN_SRC emacs-lisp
@@ -363,7 +394,7 @@
 	(org-startup-folded t)
   (org-default-notes-file (concat org-directory "/notes.org"))
 
-	(org-ellipsis "﻿")
+	(org-ellipsis "↴")
 
 	(org-edit-src-content-indentation 0)
   (org-src-tab-acts-natively t)
@@ -387,9 +418,6 @@
 	(org-outline-path-complete-in-steps nil)
   (org-agenda-files '("~/Org/planning.org" "~/Org/Research" "~/Org/OrgRoam"))
   :config
-	(set-face-attribute 'org-block-begin-line nil :foreground "#84959c")
-
-  (setq org-agenda-files '("~/Org/planning.org" "~/Org/Research" "~/Org/OrgRoam"))
   (setq org-agenda-deadline-faces
         '((1.001 . error)
           (1.0 . org-warning)
@@ -400,7 +428,7 @@
     (org-journal-new-entry t)
     (goto-char (point-max))
     (re-search-backward "^\\*")
-    )
+	)
 
 	(setq org-format-latex-options
 				(plist-put org-format-latex-options :scale 1.8))
@@ -467,14 +495,14 @@
 	(org-modern-fold-stars
 	 '(("⇛" . "⇓") ("⏵" . "▽") ("⯈" . "⯆") ("▸" . "▿") ("▸" . "▿")))
 	:config
-	(setq org-modern-todo-faces
-	     (quote (("IN PROGRESS" :foreground "orange" :inverse-video t :weight semibold)
-							 ("PAUSED" :foreground "yellow" :inverse-video t :weight semibold)
-							 )))
-	(set-face-attribute 'org-modern-progress-complete
-											nil :background "#c3e88d" :foreground "gray10")
-	(set-face-attribute 'org-modern-progress-incomplete
-											nil :background "#bbbeb7" :foreground "gray10")
+	(setq org-modern-todo-faces '(
+	  ("IN PROGRESS" :foreground "orange" :inverse-video t :weight semibold)
+		("PAUSED" :foreground "yellow" :inverse-video t :weight semibold)))
+
+	(setq org-modern-tag-faces '(
+	  ("TOREAD" :foreground "#b8dbce")
+		("REREAD" :foreground "#dbceb8")
+		("READ" :foreground "#d7dbb8")))
 )
 #+end_src
 ** =calfw=
@@ -687,6 +715,31 @@
        )
 )
 #+end_src
+* RSS
+#+begin_src emacs-lisp
+(use-package elfeed
+	:bind ("C-c w e" . elfeed)
+)
+
+(use-package elfeed-org
+  :after elfeed
+  :config
+  (elfeed-org)
+)
+
+(use-package elfeed-notifier
+	:load-path "elpa/elfeed-notifier/"
+	:hook (elfeed-search-mode . elfeed-notifier-mode)
+	:custom
+	(elfeed-notifier-alert-mode-line t)
+	:config
+	(defun my/elfeed-notifier-mode-line-formatter (nb)
+	  "Take the number NB of entries and format the string for the modeline"
+	  (when (> nb 0)
+	    (propertize (format "󠀠󠀠%s " nb) 'face 'elfeed-notifier-modeline-face)))
+	(setq elfeed-notifier-modeline-formatter 'my/elfeed-notifier-mode-line-formatter)
+)
+#+end_src
 * TODO LLM
 #+begin_src emacs-lisp
 (use-package gptel
@@ -704,7 +757,7 @@
 ** Git-gutter
 #+begin_src emacs-lisp
 (use-package git-gutter
-  :hook (prog-mode . git-gutter-mode)
+	:commands git-gutter-mode
   :custom
   (git-gutter:update-interval 0.5)
 )
